@@ -321,6 +321,10 @@
   slider.min = Y0; slider.max = Y1; slider.value = Y1;
   slider.addEventListener("input", () => renderSnapshot(+slider.value));
 
+  // Current tenures should run to the latest fiscal year we have data for —
+  // including the in-progress year covered only by quarterly filings.
+  const LATEST_FY = Math.max(Y1, ...(((D.quarterly || {}).quarters) || []).map(q => q.fy));
+
   const ceoFor = y => (meta.leadership.find(l => y >= l.from && (l.to == null || y <= l.to)) || {}).name || "—";
   const cfoFor = y => ((meta.cfoLeadership || []).find(l => y >= l.from && (l.to == null || y <= l.to)) || {}).name || "—";
   const eraFor = y => (meta.eras.find(e => y >= e.from && y <= e.to) || {}).label || "—";
@@ -408,7 +412,7 @@
       { label: "Last 5 years", from: Y1 - 4, to: Y1 },
     ].concat(meta.eras.map(e => ({ label: e.label, from: e.from, to: e.to }))));
   buildChips("ceoChips", meta.leadership.map(l => ({
-    label: l.name.replace(/(\w)\w*\s/g, "$1. "), from: l.from, to: l.to == null ? Y1 : l.to
+    label: l.name.replace(/(\w)\w*\s/g, "$1. "), from: l.from, to: l.to == null ? LATEST_FY : l.to
   })));
   // CFO chips — same interaction as CEO chips; repeat names (Graziano's two
   // tenures) get a start-year suffix so the chips stay distinguishable
@@ -420,7 +424,7 @@
     buildChips("cfoChips", cfos.map(l => ({
       label: l.name.replace(/(\w)\w*\s/g, "$1. ") +
              (counts[l.name] > 1 ? " \u2019" + String(l.from).slice(2) : ""),
-      from: l.from, to: l.to == null ? Y1 : l.to
+      from: l.from, to: l.to == null ? LATEST_FY : l.to
     })));
   })();
 
@@ -1109,7 +1113,39 @@
 
   function drawChart() {
     const series = state.metrics.map(k => ({ key: k, label: METRICS[k].label, color: METRICS[k].color, unit: METRICS[k].unit }));
-    chart.render({ data: fin, series, yearRange: state.range, scale: state.scale, milestones: meta.milestones });
+
+    // Short ranges (a recent CFO tenure, the current era) can contain only one
+    // or two completed fiscal years, which draws as a lone dot in an empty
+    // field. Where the selected metrics exist quarterly, plot filed quarters
+    // instead so the window is actually populated — reported figures only.
+    const QUARTERLY_KEYS = { revenue: 1, netIncome: 1 };
+    const allQ = ((D.quarterly || {}).quarters) || [];
+    const annualInRange = fin.filter(d => d.year >= state.range[0] && d.year <= state.range[1] &&
+                                          state.metrics.some(k => d[k] != null));
+    const qInRange = allQ.filter(q => q.fy >= state.range[0] && q.fy <= state.range[1]);
+    const useQuarterly = annualInRange.length < 3 && qInRange.length >= 3 &&
+                         state.metrics.every(k => QUARTERLY_KEYS[k]);
+
+    let data = fin, yearRange = state.range;
+    if (useQuarterly) {
+      // fiscal quarter -> fractional year (FY2026 Q1 = 2026.00, Q2 = 2026.25 …)
+      data = qInRange.map(q => {
+        const row = { year: +(q.fy + (q.fq - 1) / 4).toFixed(2), _qLabel: `Q${q.fq} FY${q.fy}` };
+        state.metrics.forEach(k => { row[k] = q[k]; });
+        return row;
+      });
+      yearRange = [data[0].year, data[data.length - 1].year];
+    }
+    chart.render({ data, series, yearRange, scale: state.scale, milestones: useQuarterly ? [] : meta.milestones });
+    if (useQuarterly) {
+      const first = qInRange[0], last = qInRange[qInRange.length - 1];
+      document.getElementById("chartNote").textContent =
+        `Showing ${state.metrics.map(k => METRICS[k].label).join(", ")} by fiscal quarter · ` +
+        `Q${first.fq} FY${first.fy} – Q${last.fq} FY${last.fy} (${state.rangeLabel}) · ${state.scale} scale. ` +
+        `This range covers fewer than three completed fiscal years, so the chart plots reported quarters ` +
+        `instead of annual totals — filed figures from Apple's earnings releases and Forms 10-Q/10-K, not estimates.`;
+      return;
+    }
     const names = state.metrics.map(k => METRICS[k].label).join(", ");
     document.getElementById("chartNote").textContent =
       `Showing ${names} · ${state.range[0]}–${state.range[1]} (${state.rangeLabel}) · ${state.scale} scale. ` +
@@ -3325,12 +3361,45 @@
         svg.appendChild(pLine);
       }
 
+      // Right-hand scale for the normalised bar overlays (dividends / EPS).
+      // Without it the bars are unreadable against the left price axis.
+      function drawOverlayAxis(maxVal, botY, bandH, fmtV, colour, label) {
+        if (!isFinite(maxVal) || maxVal <= 0) return;
+        const xRight = PAD.left + iw;
+        [0, 0.5, 1].forEach(f => {
+          const y = botY - f * bandH;
+          const tick = document.createElementNS(SVGNS, "line");
+          tick.setAttribute("x1", xRight - 5); tick.setAttribute("y1", y);
+          tick.setAttribute("x2", xRight); tick.setAttribute("y2", y);
+          tick.setAttribute("stroke", colour); tick.setAttribute("stroke-width", "1");
+          svg.appendChild(tick);
+          const t = document.createElementNS(SVGNS, "text");
+          t.setAttribute("x", xRight - 8); t.setAttribute("y", y + 3.5);
+          t.setAttribute("text-anchor", "end");
+          t.setAttribute("font-size", "10"); t.setAttribute("fill", colour);
+          t.setAttribute("font-family", "var(--mono)");
+          t.textContent = fmtV(maxVal * f);
+          svg.appendChild(t);
+        });
+        const cap = document.createElementNS(SVGNS, "text");
+        cap.setAttribute("x", xRight - 8); cap.setAttribute("y", botY - bandH - 8);
+        cap.setAttribute("text-anchor", "end");
+        cap.setAttribute("font-size", "9.5"); cap.setAttribute("fill", colour);
+        cap.setAttribute("font-family", "var(--mono)");
+        cap.textContent = label;
+        svg.appendChild(cap);
+      }
+
       // ── Secondary overlay: Dividends per share (bar chart below price) ──
       if (heroActiveLayer === "dividends") {
         const divPts = annFin.filter(d => d.dividendsPerShare != null && d.dividendsPerShare > 0);
         const divMax = Math.max(...divPts.map(d => d.dividendsPerShare));
         const divBotY = PAD.top + ih;
         const divH    = ih * 0.25;    // use bottom 25% of chart for dividend bars
+        // The bars are normalised to their own maximum, so without a scale of
+        // their own a ~$1 dividend reads as ~$80 on the price axis. Label the
+        // right edge with the actual per-share values.
+        drawOverlayAxis(divMax, divBotY, divH, v => `$${v.toFixed(2)}`, "rgba(111,220,140,0.9)", "Dividends/share");
         divPts.forEach(d => {
           const bx  = xp(d.year) - 4;
           const bh  = (d.dividendsPerShare / divMax) * divH;
@@ -3348,6 +3417,7 @@
         const epsPts = annFin.filter(d => d.epsDiluted != null);
         const epsMax = Math.max(...epsPts.map(d => Math.abs(d.epsDiluted)));
         const epsBotY = PAD.top + ih;
+        drawOverlayAxis(epsMax, epsBotY, ih * 0.25, v => `$${v.toFixed(2)}`, "rgba(255,214,10,0.9)", "Diluted EPS");
         const epsH    = ih * 0.2;
         const epsZeroY = epsBotY;
         epsPts.forEach(d => {
