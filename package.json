@@ -1,7 +1,0 @@
-{
-  "name": "applereportsdashboard",
-  "version": "1.0.0",
-  "description": "Apple Through the Years dashboard - Cloudflare Pages static site with Functions",
-  "private": true,
-  "scripts": {}
-}
