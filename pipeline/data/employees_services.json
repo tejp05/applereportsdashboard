@@ -1,0 +1,175 @@
+{
+ "employees": [
+  {
+   "year": 2008,
+   "count": 32000,
+   "source": "FY2008 10-K Item 1 ('approximately 32,000 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000119312508224958/d10k.htm"
+  },
+  {
+   "year": 2009,
+   "count": 34300,
+   "source": "FY2009 10-K Item 1 ('approximately 34,300 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000119312509214859/d10k.htm"
+  },
+  {
+   "year": 2010,
+   "count": 46600,
+   "source": "FY2010 10-K Item 1 ('approximately 46,600 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000119312510238044/d10k.htm"
+  },
+  {
+   "year": 2011,
+   "count": 60400,
+   "source": "FY2011 10-K Item 1 ('approximately 60,400 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000119312511282113/d220209d10k.htm"
+  },
+  {
+   "year": 2012,
+   "count": 72800,
+   "source": "FY2012 10-K Item 1 ('approximately 72,800 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000119312512444068/d411355d10k.htm"
+  },
+  {
+   "year": 2013,
+   "count": 80300,
+   "source": "FY2013 10-K Item 1 ('approximately 80,300 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000119312513416534/d590790d10k.htm"
+  },
+  {
+   "year": 2014,
+   "count": 92600,
+   "source": "FY2014 10-K Item 1 ('approximately 92,600 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000119312514383437/d783162d10k.htm"
+  },
+  {
+   "year": 2015,
+   "count": 110000,
+   "source": "FY2015 10-K Item 1 ('approximately 110,000 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000119312515356351/d17062d10k.htm"
+  },
+  {
+   "year": 2016,
+   "count": 116000,
+   "source": "FY2016 10-K Item 1 ('approximately 116,000 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000162828016020309/a201610-k9242016.htm"
+  },
+  {
+   "year": 2017,
+   "count": 123000,
+   "source": "FY2017 10-K Item 1 ('approximately 123,000 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000032019317000070/a10-k20179302017.htm"
+  },
+  {
+   "year": 2018,
+   "count": 132000,
+   "source": "FY2018 10-K Item 1 ('approximately 132,000 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000032019318000145/a10-k20189292018.htm"
+  },
+  {
+   "year": 2019,
+   "count": 137000,
+   "source": "FY2019 10-K Item 1 ('approximately 137,000 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000032019319000119/a10-k20199282019.htm"
+  },
+  {
+   "year": 2020,
+   "count": 147000,
+   "source": "FY2020 10-K Item 1 Human Capital ('approximately 147,000 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000032019320000096/aapl-20200926.htm"
+  },
+  {
+   "year": 2021,
+   "count": 154000,
+   "source": "FY2021 10-K Item 1 Human Capital ('approximately 154,000 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000032019321000105/aapl-20210925.htm"
+  },
+  {
+   "year": 2022,
+   "count": 164000,
+   "source": "FY2022 10-K Item 1 Human Capital ('approximately 164,000 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000032019322000108/aapl-20220924.htm"
+  },
+  {
+   "year": 2023,
+   "count": 161000,
+   "source": "FY2023 10-K Item 1 Human Capital ('approximately 161,000 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000032019323000106/aapl-20230930.htm"
+  },
+  {
+   "year": 2024,
+   "count": 164000,
+   "source": "FY2024 10-K Item 1 Human Capital ('approximately 164,000 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/aapl-20240928.htm"
+  },
+  {
+   "year": 2025,
+   "count": 166000,
+   "source": "FY2025 10-K Item 1 Human Capital ('approximately 166,000 full-time equivalent employees'), https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+  }
+ ],
+ "services": [
+  {
+   "year": 2013,
+   "revenueM": 16051,
+   "label": "iTunes, Software and Services",
+   "source": "FY2013 10-K Item 7 MD&A net-sales-by-category table ('iTunes, software and services $16,051, +25%'), https://www.sec.gov/Archives/edgar/data/320193/000119312513416534/d590790d10k.htm"
+  },
+  {
+   "year": 2014,
+   "revenueM": 18063,
+   "label": "iTunes, Software and Services",
+   "source": "FY2014 10-K Item 7 MD&A net-sales-by-category table ('iTunes, Software and Services $18,063, +13%'), https://www.sec.gov/Archives/edgar/data/320193/000119312514383437/d783162d10k.htm"
+  },
+  {
+   "year": 2015,
+   "revenueM": 19909,
+   "label": "Services",
+   "source": "FY2015 10-K Item 7 MD&A net-sales-by-category table ('Services 19,909, +10%'), https://www.sec.gov/Archives/edgar/data/320193/000119312515356351/d17062d10k.htm"
+  },
+  {
+   "year": 2016,
+   "revenueM": 24348,
+   "label": "Services",
+   "source": "FY2016 10-K Item 7 MD&A net-sales-by-category table ('Services 24,348, +22%'), https://www.sec.gov/Archives/edgar/data/320193/000162828016020309/a201610-k9242016.htm"
+  },
+  {
+   "year": 2017,
+   "revenueM": 29980,
+   "label": "Services",
+   "source": "FY2017 10-K Item 7 MD&A net-sales-by-category table ('Services 29,980, +23%'), https://www.sec.gov/Archives/edgar/data/320193/000032019317000070/a10-k20179302017.htm"
+  },
+  {
+   "year": 2018,
+   "revenueM": 37190,
+   "label": "Services",
+   "source": "FY2018 10-K Item 7 MD&A net-sales-by-category table ('Services 37,190, +24%'), https://www.sec.gov/Archives/edgar/data/320193/000032019318000145/a10-k20189292018.htm"
+  },
+  {
+   "year": 2019,
+   "revenueM": 46291,
+   "label": "Services",
+   "source": "FY2019 10-K Item 7 MD&A net-sales-by-category table ('Services 46,291, +16%'), https://www.sec.gov/Archives/edgar/data/320193/000032019319000119/a10-k20199282019.htm"
+  },
+  {
+   "year": 2020,
+   "revenueM": 53768,
+   "label": "Services",
+   "source": "FY2020 10-K Item 7 MD&A net-sales-by-category table ('Services 53,768, +16%'), https://www.sec.gov/Archives/edgar/data/320193/000032019320000096/aapl-20200926.htm"
+  },
+  {
+   "year": 2021,
+   "revenueM": 68425,
+   "label": "Services",
+   "source": "FY2021 10-K Item 7 MD&A net-sales-by-category table ('Services 68,425, +27%'), https://www.sec.gov/Archives/edgar/data/320193/000032019321000105/aapl-20210925.htm"
+  },
+  {
+   "year": 2022,
+   "revenueM": 78129,
+   "label": "Services",
+   "source": "FY2022 10-K Item 7 MD&A net-sales-by-category table ('Services 78,129, +14%'), https://www.sec.gov/Archives/edgar/data/320193/000032019322000108/aapl-20220924.htm"
+  },
+  {
+   "year": 2023,
+   "revenueM": 85200,
+   "label": "Services",
+   "source": "FY2023 10-K Item 7 MD&A net-sales-by-category table ('Services 85,200, +9%'), https://www.sec.gov/Archives/edgar/data/320193/000032019323000106/aapl-20230930.htm"
+  },
+  {
+   "year": 2024,
+   "revenueM": 96169,
+   "label": "Services",
+   "source": "FY2024 10-K Item 7 MD&A net-sales-by-category table ('Services 96,169, +13%'), https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/aapl-20240928.htm"
+  },
+  {
+   "year": 2025,
+   "revenueM": 109158,
+   "label": "Services",
+   "source": "FY2025 10-K Item 7 MD&A net-sales-by-category table ('Services 109,158, +14%'), https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+  }
+ ],
+ "notes": "Every figure was extracted verbatim from the primary 10-K document fetched from SEC EDGAR (CIK 0000320193); the exact document URL is cited per entry. Employees: company-wide full-time equivalent (FTE) count as of each fiscal year-end date, excluding the separately disclosed FTE temporary employees/contractors (that extra figure was only disclosed FY2008-FY2014, e.g. FY2008 also had ~3,100 temporary/contractors). Services: as ORIGINALLY reported in that fiscal year's own 10-K -- FY2013-FY2014 under category 'iTunes, Software and Services', FY2015-FY2025 under 'Services'. Restatement caution for trend charts: with ASC 606 adoption and reclassification of the amortization of the deferred value of certain free services, the FY2019 10-K's comparative table restates FY2018 Services to $39,748M (vs $37,190M as originally reported, used here) and FY2017 to $32,700M (vs $29,980M as originally reported, used here); series is therefore not perfectly comparable across the FY2018/FY2019 boundary on an as-reported basis. Also note FY2017 and FY2023 were 53-week fiscal years. FY2025 data (Services $109,158M; ~166,000 FTEs) verified from the FY2025 10-K filed 2025-10-31, which postdates training data. No values were estimated or interpolated; no nulls needed -- all 18 employee years and all 13 services years were found in the filings."
+}

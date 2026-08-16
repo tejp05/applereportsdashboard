@@ -1,0 +1,39 @@
+— Apple Inc. Form 10-K, fiscal 1996 (filed 1996-12-19) — Item 1, Business —
+
+Item 1. Business
+
+General
+
+Apple Computer, Inc. ("Apple" or the "Company") was incorporated under the laws of the State of California on January 3, 1977. The Company's principal executive offices are located at 1 Infinite Loop, Cupertino, California, 95014 and its telephone number is (408) 996-1010.
+
+The Company designs, manufactures and markets microprocessor-based personal computers and related personal computing and communicating solutions for sale primarily to education, home, business and government customers. Substantially all of the Company's net sales to date have been derived from the sale of personal computers from its Apple Macintosh(registered trademark) line of computers and related software and peripherals. The Company operates in one principal industry segment across geographically diverse marketplaces.
+
+During 1996, the Company began to implement certain restructuring actions aimed at reducing its cost structure, improving its competitiveness, and restoring sustained profitibility. The Company's restructuring actions have included the termination of employees, as well as the sale of the Company's Fountain, Colorado, manufacturing facility to SCI Systems, Inc. ("SCI"). As part of the terms of this sale, the Company is committed to purchase product manufactured by SCI in the future. Further information regarding the above may be found in Part II, Item 7 of this Annual Report on Form 10-K (the "Form 10-K") under the subheadings "Restructuring of Operations" and "Inventory and Supply" included under the heading "Factors That May Affect Future Results and Financial Condition," and in Part II, Item 8 on this Form 10-K in the Notes to Consolidated Financial Statements under the heading "Restructuring of Operations," under the subheading "Concentrations in the Available Sources of Supply of Materials and Product" included under the heading "Concentrations of Risk," and under the subheading "Purchase Commitment" included under the heading "Commitments and Contingencies," which information is hereby incorporated by reference.
+
+Principal products
+
+Apple Macintosh personal computers were first introduced in 1984, and are characterized by their intuitive ease of use, innovative applications base, and built-in networking, graphics and multimedia capabilities.
+
+The Company offers a wide range of personal computing products, including personal computers, related peripherals, software, and networking and connectivity products.
+
+All of the Company's Macintosh products include the PowerPC(trademark) RISC-based microprocessor. The Company also offers computer products capable of running application software designed for the MS-DOS or Windows operating systems ("Cross Platform Products"). These products include the RISC-based PowerPC microprocessor and either include the Pentium or 586-class microprocessor or can accommodate an add-on card containing a Pentium or 586-class microprocessor. These products enable users to run concurrently applications that require the Mac OS, MS-DOS, Windows 3.1, or Windows 95 operating systems.
+
+Power Macintosh
+
+The Power Macintosh high-performance family of personal computers is targeted at business, academic and professional users and is designed to meet the speed, expansion and networking needs of the most demanding Macintosh user. These Power Macintosh products not only support virtually all existing Macintosh applications, but can also run MS-DOS and Windows applications when using SoftWindows(trademark) software from Insignia Solutions.
+
+Macintosh Performa
+
+The Performa family of personal computers is designed to appeal primarily to first-time personal computer users. These products feature all-in-one box computing solutions, including software and hardware chosen specifically with home users in mind.
+
+Macintosh PowerBook
+
+The PowerBook family of portable computer products is specifically designed for mobile computing needs. All PowerBook personal computers include software designed to enhance mobile computing.
+
+Peripheral Products
+
+The Company sells associated computer peripherals, including the ImageWriter(registered trademark), StyleWriter(registered trademark), Color StyleWriter and LaserWriter(registered trademark) printer families, CD-ROM and magnetic disk drives, scanners, a range of color monitors, and the QuickTake(registered trademark) 150 digital camera.
+
+MessagePad and Related Products
+
+The Apple MessagePad(registered trademark) 130 communications assistant integrates Newton(registered trademark) technology in a hand-held mobile computer that intelligently assists the user in capturing, organizing and communicating information. The Apple MessagePad 2000 includes additional built-in applications and a faster processor as compared to the Apple MessagePad 130. The Apple eMate 300 integrates Newton technology in a mobile computer and includes built-in applications. The product allows students to perform preliminary work on the eMate 300 and enhance it on either an existing Mac OS or Windows software-based desktop computer. The eMate 300 allows students to enter data by keyboard or stylus and also share data and files with each other, send and receive e-mail, and access the Internet. The Company plans to begin selling the Apple MessagePad 2000 and the Apple eMate 300 in early calendar 1997.

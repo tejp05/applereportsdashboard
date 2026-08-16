@@ -1,0 +1,35 @@
+— Apple Inc. Form 10-K, fiscal 1997 (filed 1997-12-05) — Item 1, Business —
+
+ITEM 1. BUSINESS
+
+GENERAL
+
+Apple Computer, Inc. ("Apple" or the "Company") was incorporated under the laws of the State of California on January 3, 1977. The Company's principal executive offices are located at 1 Infinite Loop, Cupertino, California, 95014 and its telephone number is (408) 996-1010.
+
+The Company designs, manufactures and markets microprocessor-based personal computers and related personal computing and communicating solutions for sale primarily to education, creative, home, business and government customers. Substantially all of the Company's net sales to date have been derived from the sale of personal computers from its Apple Macintosh-Registered Trademark- line of computers and related software and peripherals. The Company operates in one principal industry segment across geographically diverse marketplaces.
+
+During 1997, the Company continued to implement certain restructuring actions aimed at reducing its cost structure, improving its competitiveness, and restoring sustainable profitability. The Company's restructuring actions have included the termination of employees, closure of facilities and cancellation of contracts. Further information regarding these restructuring actions may be found in Part II, Item 7 of this Annual Report on Form 10-K (the "Form 10-K") under the subheading "Restructuring of Operations" included under the heading "Factors That May Affect Future Results and Financial Condition," and in Part II, Item 8 on this Form 10-K in the Notes to Consolidated Financial Statements under the heading "Restructuring of Operations," which information is hereby incorporated by reference.
+
+PRINCIPAL PRODUCTS
+
+Apple Macintosh personal computers were first introduced in 1984, and are characterized by their intuitive ease of use, innovative applications base, and built-in networking, graphics and multimedia capabilities.
+
+The Company offers a wide range of personal computing products, including personal computers, related peripherals, software, and networking and connectivity products. All of the Company's Macintosh products employ PowerPC-TM- RISC-based microprocessors.
+
+POWER MACINTOSH
+
+The Power Macintosh "Flagship" line of high-performance personal computers is targeted at business and professional users and is designed to meet the speed, expansion and networking needs of the most demanding Macintosh user. These Power Macintosh products not only support virtually all existing Macintosh applications, but can also run MS-DOS and Windows applications when using SoftWindows-TM- software from Insignia Solutions or Virtual PC-TM- software from Connectix Corporation.
+
+The Power Macintosh "Value" line of personal computers is designed to appeal primarily to academic, consumer and first-time personal computer users. Many of these products feature all-in-one box computing solutions, including software and hardware chosen specifically with home and education users in mind.
+
+MACINTOSH POWERBOOK
+
+The PowerBook family of portable computer products is specifically designed for mobile computing needs. All PowerBook personal computers include software designed to enhance mobile computing.
+
+PERIPHERAL PRODUCTS
+
+The Company sells certain associated computer peripherals including LaserWriter-Registered Trademark- printers and a range of color monitors.
+
+MESSAGEPAD AND EMATE
+
+The Apple MessagePad-Registered Trademark- 2100 communications assistant employs the Company's proprietary Newton-Registered Trademark-technology in a hand-held mobile computer that intelligently assists the user in capturing, organizing and communicating information using built-in business software programs, including word processing, Internet e-mail and spreadsheet applications. The Apple eMate 300 integrates Newton technology in a mobile computer designed for use primarily in education. The eMate 300 allows students to enter data by keyboard or stylus and share data and files with each other, and with Mac OS-Registered Trademark- and Windows-Registered Trademark- software-based computers, send and receive e-mail, and access the Internet. The eMate 300 includes built-in word processing, drawing and spreadsheet applications.

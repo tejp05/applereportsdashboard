@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apple Through the Years — Annual Reports Dashboard</title>
+  <meta name="description" content="Fifty years of Apple, drawn directly from the annual reports and 10-K filings (1977–2025)." />
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23f5f5f7" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.033 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>' />
+  <link rel="stylesheet" href="styles.css?v=1" />
+</head>
+<body>
+  <!-- ===== Top bar ===== -->
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-logo" width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Apple"><title>Apple Inc.</title><path fill="#f5f5f7" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.033 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
+      <span class="brand-divider"></span>
+      <span class="brand-title">Through&nbsp;the&nbsp;Years</span>
+      <span class="brand-sub">1976 – 2026</span>
+    </div>
+    <span class="spacer"></span>
+    <span class="tag" id="dataTag">annual reports</span>
+  </header>
+
+  <!-- CNBC-style scrolling ticker: AAPL + peer quotes (optional live server /quotes).
+       Hidden until the first successful fetch; refreshes every 60s. -->
+  <div class="ticker-strip" id="tickerStrip" aria-hidden="true" hidden>
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+
+  <!-- ===== Tab navigation ===== -->
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" data-tab="home" aria-selected="true">Overview</button>
+    <button class="tab" role="tab" data-tab="story">Story Mode</button>
+    <button class="tab" role="tab" data-tab="regression">Regression Lab</button>
+    <button class="tab" role="tab" data-tab="macro">Macro vs Apple</button>
+    <button class="tab" role="tab" data-tab="ma">Mergers &amp; Acquisitions</button>
+    <button class="tab" role="tab" data-tab="competitors">Competitors</button>
+    <button class="tab" role="tab" data-tab="about">About &amp; Data</button>
+  </nav>
+
+  <main class="wrap">
+
+    <!-- ============================ HOME ============================ -->
+    <section class="panel active" id="panel-home" role="tabpanel">
+
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-text">
+          <div class="hero-kicker">1976 — 2025 · seven CEOs · four reinventions</div>
+          <h1>Fifty years of Apple,<br>straight from the annual reports</h1>
+          <p>Every figure here comes directly from Apple&rsquo;s annual reports and SEC filings and is
+             cross-checked against the record — never estimated. Scrub the timeline, filter by era,
+             and watch a garage startup become the most valuable company on Earth.</p>
+        </div>
+
+        <!-- Bob Shell hero: a live terminal window that "types" real data
+             (live quote, latest SEC filing, milestones) over an Apple-style
+             morphing colour aurora. Decorative (aria-hidden); tilts gently
+             toward the cursor like a product-page hero shot. -->
+        <div class="hero-visual" id="heroVisual" aria-hidden="true">
+          <div class="hero-aurora">
+            <span class="ha-blob ha-a"></span><span class="ha-blob ha-b"></span>
+            <span class="ha-blob ha-c"></span><span class="ha-blob ha-d"></span>
+          </div>
+          <div class="bobshell" id="bobShell">
+            <div class="bs-titlebar">
+              <span class="bs-light r"></span><span class="bs-light y"></span><span class="bs-light g"></span>
+              <span class="bs-title">reports@apple — shell</span>
+              <span class="bs-live" id="bsLive">● LIVE</span>
+            </div>
+            <pre class="bs-banner">▄▀█ █▀█ █▀█ █   █▀▀   SHELL
+█▀█ █▀▀ █▀▀ █▄▄ ██▄   v1.0.0</pre>
+            <div class="bs-screen" id="bsScreen"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FY2025 snapshot (latest reported year) -->
+      <section class="fy-section">
+        <!-- Live market quote (fetched client-side; graceful fallback when offline) -->
+        <div class="live-quote" id="liveQuote" aria-live="polite">
+          <span class="lq-dot" id="lqDot"></span>
+          <span class="lq-label">AAPL · NASDAQ</span>
+          <span class="lq-price" id="lqPrice">—</span>
+          <span class="lq-change" id="lqChange"></span>
+          <svg class="lq-chart" id="lqChart" aria-hidden="true" viewBox="0 0 200 48" preserveAspectRatio="none"></svg>
+          <span class="lq-cap" id="lqCap"></span>
+          <span class="lq-note" id="lqNote">fetching live quote…</span>
+        </div>
+
+        <!-- Latest SEC filing + live earnings (fetched client-side straight from
+             SEC EDGAR — CORS-open; self-refreshes so a brand-new 10-Q/10-K shows up
+             here without a data rebuild) -->
+        <div class="sec-filing-card card" id="secFilingCard" aria-live="polite">
+          <div class="sfc-top">
+            <span class="lq-dot" id="sfDot"></span>
+            <span class="lq-label">SEC EDGAR · Latest Filing</span>
+            <span class="sfc-badge" id="sfBadge">—</span>
+            <span class="sfc-period" id="sfPeriod"></span>
+            <a class="sfc-link" id="sfLink" href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&amp;CIK=0000320193&amp;type=10-K" target="_blank" rel="noopener">View filing ↗</a>
+            <a class="sfc-link" id="sfNasdaqLink" href="https://www.nasdaq.com/market-activity/stocks/aapl/sec-filings" target="_blank" rel="noopener">All filings (Nasdaq) ↗</a>
+            <span class="lq-note" id="sfNote">checking EDGAR…</span>
+          </div>
+          <div class="sfc-body">
+            <svg class="sfc-chart" id="sfChart" viewBox="0 0 340 74" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <div class="sfc-headline" id="sfHeadline"></div>
+          </div>
+          <div class="callout" style="margin-top:12px">
+            <b>Latest quarter (fiscal Q3 2026, ended Jun 27)</b>: revenue <b>$109.4B</b> (+16% YoY) ·
+            diluted EPS <b>$2.02</b> (+29%) · gross margin <b>50.1%</b> · dividend <b>$0.27</b>/sh ·
+            Sep-quarter guide <b>+9–11%</b> YoY amid memory-cost headwinds.
+            <div style="margin-top:6px;font-size:11px;color:var(--ink-dim)">Source: Apple Q3 FY2026 earnings release &amp; Form 10-Q (Jul 30, 2026). FY2025 audited: revenue $416.2B (+6.4%), net income $112.0B, diluted EPS $7.46 — Apple FY2025 Form 10-K.</div>
+          </div>
+        </div>
+
+        <!-- Past-5-years selector: re-renders the snapshot below for any of the
+             last five fiscal years; a "live" chip appears automatically when a
+             10-K newer than the pipeline data shows up on EDGAR. -->
+        <div class="chip-row fy-year-chips" id="fyYearChips"><span class="legend">Snapshot year</span></div>
+        <div class="fy-statbar" id="fyStatbar"></div>
+        <div class="fy-cols">
+          <div class="card fy-panel">
+            <h2>Revenue by Product Category</h2>
+            <p class="sub" id="donutSub"></p>
+            <div class="donut-wrap">
+              <div class="donut" id="segDonut"></div>
+              <div class="donut-legend" id="segLegend"></div>
+            </div>
+            <div class="callout" id="segCallout"></div>
+          </div>
+          <div class="card fy-panel">
+            <h2>Gross Margin — Products vs Services</h2>
+            <p class="sub">FY2025 gross margin %, as reported in the 10-K</p>
+            <div id="gmBars"></div>
+            <div class="callout">Why it matters: <b>Services</b> is Apple&rsquo;s margin engine — App Store, iCloud and subscriptions carry roughly double the gross margin of hardware; <b>Products</b> still deliver the volume, the installed base, and the customers Services monetizes.</div>
+          </div>
+        </div>
+
+        <!-- Programmatic custom charts land here (window.createCustomChart hook).
+             Empty by default. -->
+        <div class="custom-charts-host" id="customChartsHost"></div>
+      </section>
+
+      <!-- i. Timeline slider -->
+      <div class="scrubber card">
+        <div class="scrub-top">
+          <div class="scrub-left">
+            <div class="scrub-year" id="scrubYear">2025</div>
+          </div>
+          <div class="scrub-ctx" id="scrubCtx"></div>
+        </div>
+        <input type="range" id="scrubSlider" min="1977" max="2025" value="2025" step="1" aria-label="Select year" />
+        <div class="snap-grid" id="snapGrid"></div>
+        <div id="milestoneFlag"></div>
+      </div>
+
+      <!-- ii. Era / leadership filters -->
+      <div class="filters">
+        <p class="section-title">Filter the view by era</p>
+        <div class="chip-row" id="eraChips"><span class="legend">Company eras</span></div>
+        <div class="chip-row" id="ceoChips"><span class="legend">Leadership</span></div>
+      </div>
+
+      <!-- iii. Interactive financial trend chart -->
+      <div class="card chart-card">
+        <div class="chart-toolbar">
+          <div class="metric-toggles" id="metricToggles"></div>
+          <div class="chart-opts">
+            <label><input type="checkbox" id="logToggle" /> Log scale</label>
+          </div>
+        </div>
+        <div class="chart-host" id="chartHost">
+          <div class="tooltip" id="chartTip"></div>
+        </div>
+        <p class="chart-note" id="chartNote"></p>
+      </div>
+
+      <!-- iv. Derived performance-ratios table (interactive / adjustable) -->
+      <div class="card derived-card">
+        <div class="derived-head">
+          <div>
+            <p class="section-title" style="margin:0 0 4px">Performance ratios — derived from the filings</p>
+            <p class="derived-sub">Calculated from Apple&rsquo;s reported figures. Adjust the assumptions below; cells colour by value, and “—” means the underlying line item isn't in the filing data for that year.</p>
+          </div>
+        </div>
+        <div class="derived-controls">
+          <div class="range-chips" id="derivedRange"></div>
+          <label class="tax-ctl">ROIC tax rate
+            <input type="range" id="taxRate" min="0" max="40" value="25" step="1" />
+            <b id="taxVal">25%</b>
+          </label>
+        </div>
+        <div class="derived-table-wrap">
+          <table class="derived-table" id="derivedTable"></table>
+        </div>
+        <p class="chart-note" id="derivedNote"></p>
+      </div>
+    </section>
+
+    <!-- ====================== PLACEHOLDER PANELS =========================== -->
+    <section class="panel" id="panel-story" role="tabpanel"></section>
+    <section class="panel" id="panel-regression" role="tabpanel"></section>
+    <section class="panel" id="panel-macro" role="tabpanel"></section>
+    <section class="panel" id="panel-ma" role="tabpanel"></section>
+    <section class="panel" id="panel-competitors" role="tabpanel">
+
+      <!-- Hero — consistent with all other tabs -->
+      <div class="hero">
+        <div class="hero-text">
+          <div class="hero-kicker">Competitors &middot; current era 2022 &ndash; 2026 &middot; three product arenas</div>
+          <h1>Apple Competitive Landscape</h1>
+          <p>Interactive peer positioning, SWOT analysis, BCG portfolio mapping, Porter&rsquo;s Five Forces, and competitive positioning &mdash; across the three arenas where Apple competes: iPhone, Services, and Mac, iPad &amp; Wearables.</p>
+        </div>
+      </div>
+
+      <!-- Live peer quotes (agent server /quotes; hidden when offline) -->
+      <div class="live-mkt-row" id="compLiveRow" hidden></div>
+
+      <div class="intel-dashboard-wrapper" style="padding-top:0">
+
+        <!-- Performance chart card — no title, mode buttons evenly distributed -->
+        <div class="intel-card benchmark-card" id="benchmarkCard">
+
+          <!-- Three equal-width chart mode buttons -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;">
+            <button class="reg-preset-btn active" id="chartModeTR"      data-mode="totalReturn" style="text-align:center;">Apple vs S&amp;P Benchmarks</button>
+            <button class="reg-preset-btn"         id="chartModeEV"      data-mode="evEbitda"    style="text-align:center;">Competitor Net Margin</button>
+            <button class="reg-preset-btn"         id="chartModeScatter" data-mode="scatter"     style="text-align:center;">Growth vs Profitability</button>
+          </div>
+
+          <!-- Filter + canvas — always visible -->
+          <div id="chartModeContent" style="display:flex;flex-direction:column;gap:16px;">
+
+            <!-- Filter panel -->
+            <div id="benchmark-filters-container" style="padding:16px;background:var(--surface-2);border-radius:6px;border:1px solid var(--line);">
+
+              <!-- Total return filters — pill design, horizontal -->
+              <div id="total-return-toggles" style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:8px;">
+                  <span style="color:var(--ink);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;">S&amp;P Global Industry Index Benchmarks</span>
+                  <div style="display:flex;gap:8px;">
+                    <button id="tr-select-all" style="background:none;border:1px solid var(--line);color:var(--ink-soft);border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer;font-family:var(--font);">All</button>
+                    <button id="tr-clear-all"  style="background:none;border:1px solid var(--line);color:var(--ink-soft);border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer;font-family:var(--font);">Clear</button>
+                  </div>
+                </div>
+                <div class="ev-pills" style="padding-top:2px;">
+                  <button class="ev-pill tr-pill active" data-id="tr-AAPL"    data-label="Apple Inc."                         style="--pill-color:#0071e3;font-weight:700;">Apple Inc.</button>
+                  <button class="ev-pill tr-pill active" data-id="tr-SP500IT" data-label="S&amp;P 500 Info Tech"               style="--pill-color:#ffb000;">S&amp;P 500 Info Tech</button>
+                  <button class="ev-pill tr-pill active" data-id="tr-SPHW"    data-label="S&amp;P Tech Hardware"               style="--pill-color:#ff453a;">S&amp;P Tech Hardware</button>
+                  <button class="ev-pill tr-pill active" data-id="tr-SPSW"    data-label="S&amp;P Software &amp; Services"     style="--pill-color:#bf5af2;">S&amp;P Software &amp; Services</button>
+                </div>
+              </div>
+
+              <!-- Net-margin filters -->
+              <div id="ev-ebitda-toggles" style="display:none;flex-direction:column;gap:10px;">
+
+                <!-- Header -->
+                <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:8px;">
+                  <span style="color:var(--ink);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;">Net Margin % — Company Filter</span>
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <button id="ev-select-all" class="ev-util-btn">All</button>
+                    <button id="ev-clear-all"  class="ev-util-btn">Clear</button>
+                    <label style="color:var(--down);cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;font-style:italic;">
+                      <input type="checkbox" id="showTrendline"> Trendline
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Single-row layout: Apple big button + sector groups with company pills -->
+                <div class="ev-filter-row">
+
+                  <!-- Apple — big standalone button -->
+                  <button class="ev-pill ev-cb ev-hero-btn active" data-key="AAPL" data-label="Apple" data-sector="aapl" style="--pill-color:#0071e3;">Apple</button>
+
+                  <!-- Sector groups -->
+                  <div class="ev-filter-groups">
+
+                    <div class="ev-filter-group">
+                      <button class="ev-sector-btn active" data-sector="platforms">Platforms</button>
+                      <div class="ev-pills">
+                        <button class="ev-pill ev-cb active" data-key="MSFT"  data-label="Microsoft" data-sector="platforms" style="--pill-color:#00a4ef;">Microsoft</button>
+                        <button class="ev-pill ev-cb active" data-key="GOOGL" data-label="Alphabet"  data-sector="platforms" style="--pill-color:#34a853;">Alphabet</button>
+                        <button class="ev-pill ev-cb active" data-key="AMZN"  data-label="Amazon"    data-sector="platforms" style="--pill-color:#ff9900;">Amazon</button>
+                        <button class="ev-pill ev-cb active" data-key="META"  data-label="Meta"      data-sector="platforms" style="--pill-color:#0866ff;">Meta</button>
+                      </div>
+                    </div>
+
+                    <div class="ev-filter-group">
+                      <button class="ev-sector-btn active" data-sector="silicon">Silicon</button>
+                      <div class="ev-pills">
+                        <button class="ev-pill ev-cb active" data-key="NVDA" data-label="Nvidia"   data-sector="silicon" style="--pill-color:#76b900;">Nvidia</button>
+                        <button class="ev-pill ev-cb active" data-key="QCOM" data-label="Qualcomm" data-sector="silicon" style="--pill-color:#3253dc;">Qualcomm</button>
+                      </div>
+                    </div>
+
+                    <div class="ev-filter-group">
+                      <button class="ev-sector-btn active" data-sector="hardware">Devices</button>
+                      <div class="ev-pills">
+                        <button class="ev-pill ev-cb active" data-key="DELL"  data-label="Dell Tech" data-sector="hardware" style="--pill-color:#006bb6;">Dell Tech</button>
+                        <button class="ev-pill ev-cb active" data-key="HPQ"   data-label="HP Inc."   data-sector="hardware" style="--pill-color:#0096d6;">HP Inc.</button>
+                      </div>
+                    </div>
+
+                    <div class="ev-filter-group">
+                      <button class="ev-sector-btn active" data-sector="content">Content</button>
+                      <div class="ev-pills">
+                        <button class="ev-pill ev-cb active" data-key="NFLX" data-label="Netflix" data-sector="content" style="--pill-color:#e50914;">Netflix</button>
+                      </div>
+                    </div>
+
+                  </div><!-- /ev-filter-groups -->
+                </div><!-- /ev-filter-row -->
+              </div>
+
+              <!-- Scatter filters — same Apple + sector group layout -->
+              <div id="scatter-toggles" style="display:none;flex-direction:column;gap:10px;">
+
+                <!-- Header -->
+                <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:8px;">
+                  <span style="color:var(--ink);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;">Revenue Growth % vs Net Margin — Company Filter</span>
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <button id="sc-select-all" class="ev-util-btn">All</button>
+                    <button id="sc-clear-all"  class="ev-util-btn">Clear</button>
+                    <label style="color:var(--ink-soft);cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;">
+                      Quarter: <select id="scatterQuarter" style="background:var(--surface);border:1px solid var(--line);color:var(--ink);border-radius:4px;padding:3px 8px;font-size:12px;font-family:var(--font);cursor:pointer;"></select>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Apple + sector groups -->
+                <div class="ev-filter-row">
+
+                  <!-- Apple — big standalone button -->
+                  <button class="ev-pill sc-cb ev-hero-btn active" data-key="AAPL" data-label="Apple" data-sector="aapl" style="--pill-color:#0071e3;">Apple</button>
+
+                  <!-- Sector groups -->
+                  <div class="ev-filter-groups">
+
+                    <div class="ev-filter-group">
+                      <button class="sc-sector-btn active" data-sector="platforms">Platforms</button>
+                      <div class="ev-pills">
+                        <button class="ev-pill sc-cb active" data-key="MSFT"  data-label="Microsoft" data-sector="platforms" style="--pill-color:#00a4ef;">Microsoft</button>
+                        <button class="ev-pill sc-cb active" data-key="GOOGL" data-label="Alphabet"  data-sector="platforms" style="--pill-color:#34a853;">Alphabet</button>
+                        <button class="ev-pill sc-cb active" data-key="AMZN"  data-label="Amazon"    data-sector="platforms" style="--pill-color:#ff9900;">Amazon</button>
+                        <button class="ev-pill sc-cb active" data-key="META"  data-label="Meta"      data-sector="platforms" style="--pill-color:#0866ff;">Meta</button>
+                      </div>
+                    </div>
+
+                    <div class="ev-filter-group">
+                      <button class="sc-sector-btn active" data-sector="silicon">Silicon</button>
+                      <div class="ev-pills">
+                        <button class="ev-pill sc-cb active" data-key="NVDA" data-label="Nvidia"   data-sector="silicon" style="--pill-color:#76b900;">Nvidia</button>
+                        <button class="ev-pill sc-cb active" data-key="QCOM" data-label="Qualcomm" data-sector="silicon" style="--pill-color:#3253dc;">Qualcomm</button>
+                      </div>
+                    </div>
+
+                    <div class="ev-filter-group">
+                      <button class="sc-sector-btn active" data-sector="hardware">Devices</button>
+                      <div class="ev-pills">
+                        <button class="ev-pill sc-cb active" data-key="DELL"  data-label="Dell Tech" data-sector="hardware" style="--pill-color:#006bb6;">Dell Tech</button>
+                        <button class="ev-pill sc-cb active" data-key="HPQ"   data-label="HP Inc."   data-sector="hardware" style="--pill-color:#0096d6;">HP Inc.</button>
+                      </div>
+                    </div>
+
+                    <div class="ev-filter-group">
+                      <button class="sc-sector-btn active" data-sector="content">Content</button>
+                      <div class="ev-pills">
+                        <button class="ev-pill sc-cb active" data-key="NFLX" data-label="Netflix" data-sector="content" style="--pill-color:#e50914;">Netflix</button>
+                      </div>
+                    </div>
+
+                  </div><!-- /ev-filter-groups -->
+                </div><!-- /ev-filter-row -->
+              </div>
+
+            </div>
+
+            <!-- Canvas -->
+            <div style="position:relative;height:440px;width:100%;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:16px;box-sizing:border-box;">
+              <canvas id="primaryChartCanvas"></canvas>
+            </div>
+
+          </div><!-- /chartModeContent -->
+        </div><!-- /benchmarkCard -->
+
+        <!-- Segment selector -->
+        <div class="card reg-presets-card" style="padding:16px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;" id="segmentSelector">
+            <button class="reg-preset-btn" data-seg="iphone"   style="text-align:center;font-size:15px;font-weight:700;">iPhone</button>
+            <button class="reg-preset-btn" data-seg="services" style="text-align:center;font-size:15px;font-weight:700;">Services</button>
+            <button class="reg-preset-btn" data-seg="hardware" style="text-align:center;font-size:15px;font-weight:700;">Mac, iPad &amp; Wearables</button>
+          </div>
+        </div>
+
+        <!-- Dynamic content area — hidden until a segment is selected -->
+        <div id="intelDynamicContent" class="fade-transition" style="display:none;">
+
+          <!-- Row 1: SWOT + Comparative table -->
+          <div class="intel-grid row-1">
+            <div class="intel-card">
+              <h3>1. Peer Directory &amp; Strategic SWOT</h3>
+              <div class="swot-layout">
+                <div class="peer-list">
+                  <div class="peer-tier"><span class="badge primary-badge">Tier 1 Peers</span><span id="txtTier1"></span></div>
+                  <div class="peer-tier"><span class="badge secondary-badge">Platform Rivals</span><span id="txtTier2"></span></div>
+                </div>
+                <div class="swot-text-grid">
+                  <div class="s-box"><strong>Strengths:</strong><ul id="txtS"></ul></div>
+                  <div class="w-box"><strong>Weaknesses:</strong><ul id="txtW"></ul></div>
+                  <div class="o-box"><strong>Opportunities:</strong><ul id="txtO"></ul></div>
+                  <div class="t-box"><strong>Threats:</strong><ul id="txtT"></ul></div>
+                </div>
+              </div>
+            </div>
+            <div class="intel-card">
+              <h3>2. Comparative Market Analysis</h3>
+              <div class="table-container">
+                <table class="comparative-table">
+                  <thead>
+                    <tr><th>Dimension</th><th>Apple Position</th><th>Primary Peers</th></tr>
+                  </thead>
+                  <tbody id="comparativeTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Porter's radar + Ansoff matrix -->
+          <div class="intel-grid row-2">
+            <div class="intel-card chart-card">
+              <h3>3. Porter's Five Forces Intensity</h3>
+              <div class="canvas-wrapper">
+                <canvas id="portersChart"></canvas>
+              </div>
+              <div id="portersContext" class="porters-context"></div>
+            </div>
+            <div class="intel-card">
+              <h3>4. Strategic Growth Horizon (Ansoff Matrix)</h3>
+              <div class="ansoff-grid">
+                <div class="ansoff-quad">
+                  <div class="ansoff-label">Market Penetration</div>
+                  <div class="ansoff-desc" id="ansoffPen"></div>
+                </div>
+                <div class="ansoff-quad">
+                  <div class="ansoff-label">Product Development</div>
+                  <div class="ansoff-desc" id="ansoffProd"></div>
+                </div>
+                <div class="ansoff-quad">
+                  <div class="ansoff-label">Market Development</div>
+                  <div class="ansoff-desc" id="ansoffMkt"></div>
+                </div>
+                <div class="ansoff-quad highlight-quad">
+                  <div class="ansoff-label">Diversification</div>
+                  <div class="ansoff-desc" id="ansoffDiv"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: BCG bubble + Position map -->
+          <div class="intel-grid row-2">
+            <div class="intel-card chart-card">
+              <h3>5. Growth-Share Portfolio (BCG Matrix)</h3>
+              <div class="canvas-wrapper">
+                <canvas id="bcgChart"></canvas>
+              </div>
+              <div id="bcgNarrative" class="intel-narrative"></div>
+            </div>
+            <div class="intel-card chart-card">
+              <h3 id="positionMapTitle">6. Position Mapping</h3>
+              <div class="canvas-wrapper">
+                <canvas id="positionChart"></canvas>
+              </div>
+              <div id="positionNarrative" class="intel-narrative"></div>
+            </div>
+          </div>
+
+        </div><!-- /intelDynamicContent -->
+      </div><!-- /intel-dashboard-wrapper -->
+
+      <!-- Sourcing footer for the competitive-landscape tab -->
+      <div class="comp-sources">
+        <div class="comp-sources-label">Sources</div>
+        <ul class="comp-sources-list">
+          <li>Apple SEC filings (10-K / 10-Q)</li>
+          <li>Peer earnings releases</li>
+          <li>S&amp;P Dow Jones Indices</li>
+          <li>Yahoo Finance</li>
+          <li>stockanalysis.com</li>
+          <li>IDC &middot; Counterpoint Research</li>
+        </ul>
+        <p class="comp-sources-note">
+          Peer financials, margins and market data on this tab are drawn from the
+          sources above. Product-category definitions are Apple&rsquo;s own, as stated in its
+          10-K; the SWOT, BCG and Five Forces framings are analytical interpretations built on
+          that reported data, not vendor-published ratings.
+        </p>
+      </div>
+
+    </section>
+    <section class="panel" id="panel-about" role="tabpanel"></section>
+  </main>
+
+  <!-- Info drawer (The project / Methodology) -->
+  <div class="info-overlay" id="infoOverlay"></div>
+  <aside class="info-drawer" id="infoDrawer" role="dialog" aria-modal="true">
+    <div class="info-drawer-head">
+      <p class="info-drawer-title" id="infoDrawerTitle"></p>
+      <button class="info-drawer-close" id="infoDrawerClose" aria-label="Close">&#x2715;</button>
+    </div>
+    <div class="info-drawer-body" id="infoDrawerBody"></div>
+  </aside>
+
+  <footer class="apple-footer">
+    <div class="ft-in">
+      <div><svg class="ft-logo" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Apple"><path fill="#f5f5f7" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.033 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg></div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="#home"       onclick="event.preventDefault();selectTab('home')">Overview &amp; financials</a></li>
+          <li><a href="#story"      onclick="event.preventDefault();selectTab('story')">Story mode</a></li>
+          <li><a href="#regression" onclick="event.preventDefault();selectTab('regression')">Regression lab</a></li>
+          <li><a href="#macro"      onclick="event.preventDefault();selectTab('macro')">Macro vs Apple</a></li>
+          <li><a href="#ma"         onclick="event.preventDefault();selectTab('ma')">Mergers &amp; Acquisitions</a></li>
+          <li><a href="#competitors" onclick="event.preventDefault();selectTab('competitors')">Competitors</a></li>
+          <li><a href="#about"      onclick="event.preventDefault();selectTab('about')">About &amp; Data</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Data &amp; method</h4>
+        <ul>
+          <li><a href="#about" onclick="event.preventDefault();selectTab('about')">About the data</a></li>
+          <li><a href="#about" onclick="event.preventDefault();selectTab('about')">Coverage &amp; provenance</a></li>
+          <li><a href="https://investor.apple.com" target="_blank" rel="noopener">Apple investor relations</a></li>
+          <li><a href="https://investor.apple.com/sec-filings/default.aspx" target="_blank" rel="noopener">Apple SEC filings</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>About</h4>
+        <ul>
+          <li><a href="#" onclick="event.preventDefault();openInfoDrawer('project')">The project</a></li>
+          <li><a href="#" onclick="event.preventDefault();openInfoDrawer('methodology')">Methodology</a></li>
+          <li><a href="https://www.apple.com" target="_blank" rel="noopener">Apple.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="ft-bottom">
+      <div class="ft-in2">
+        <span>© <span id="ftYear">2026</span> Apple Through the Years — an independent analytics concept built on Apple&rsquo;s public filings. Not affiliated with or endorsed by Apple Inc.</span>
+        <a href="#about">Privacy</a><a href="#about">Terms of use</a><a href="#about">Accessibility</a>
+        <p class="ft-note">Figures parsed from Apple Computer / Apple Inc. annual reports and Form 10-K filings (fiscal 1977–2025); US$ millions unless noted; <code>n/a</code> = not reliably stated (never estimated). Market data via Yahoo Finance &amp; SEC EDGAR. <span id="genStamp"></span></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Chart.js — powers the Competitors tab benchmark/radar/bubble charts.
+       Loaded async so a slow/unreachable CDN never blocks the rest of the page;
+       the competitors code waits for Chart to become available before drawing. -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+  <script>
+    /* Optional live-features server (ticker, quotes, filings proxy). The site
+       is fully functional without one — every live widget hides itself or falls
+       back to SEC EDGAR / baked data when the endpoints are unreachable.
+       - Local dev: defaults to localhost:8787 if you run a server there.
+       - Hosted: defaults to same origin (deploy serverless /quote, /filings/*
+         next to the static site later and everything lights up).
+       - Override: visit once with ?agent=https://your-host — persists in
+         localStorage. ?agent=clear removes the override. */
+    (function () { try {
+      const p = new URLSearchParams(location.search).get("agent");
+      if (p === "clear") localStorage.removeItem("LIVE_AGENT_URL");
+      else if (p) localStorage.setItem("LIVE_AGENT_URL", p.replace(/\/+$/, ""));
+      const stored = localStorage.getItem("LIVE_AGENT_URL");
+      const isLocalDev = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+      const v = stored || (isLocalDev ? null : location.origin);
+      if (v) window.LIVE_AGENT_URL = v;
+    } catch (_) {} })();
+  </script>
+  <script src="data.js?v=1"></script>
+  <script src="Story Mode/aapl_daily_prices.js"></script>
+  <script src="charts.js?v=1"></script>
+  <script src="app.js?v=1"></script>
+  <script src="regression.js?v=1"></script>
+</body>
+</html>

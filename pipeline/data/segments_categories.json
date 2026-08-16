@@ -1,0 +1,122 @@
+{
+ "categories": [
+  {
+   "year": 2021,
+   "iPhone": 191973,
+   "Mac": 35190,
+   "iPad": 31862,
+   "Wearables, Home and Accessories": 38367,
+   "Services": 68425,
+   "total": 365817,
+   "source": "FY2021 10-K (EDGAR accession 0000320193-21-000105, aapl-20210925.htm), Item 7 MD&A, 'Products and Services Performance' table, p.21"
+  },
+  {
+   "year": 2022,
+   "iPhone": 205489,
+   "Mac": 40177,
+   "iPad": 29292,
+   "Wearables, Home and Accessories": 41241,
+   "Services": 78129,
+   "total": 394328,
+   "source": "FY2022 10-K (EDGAR accession 0000320193-22-000108, aapl-20220924.htm), Item 7 MD&A, 'Products and Services Performance' table, p.21"
+  },
+  {
+   "year": 2023,
+   "iPhone": 200583,
+   "Mac": 29357,
+   "iPad": 28300,
+   "Wearables, Home and Accessories": 39845,
+   "Services": 85200,
+   "total": 383285,
+   "source": "FY2023 10-K (EDGAR accession 0000320193-23-000106, aapl-20230930.htm), Item 7 MD&A, 'Products and Services Performance' table; confirmed identical in FY2025 10-K comparative column"
+  },
+  {
+   "year": 2024,
+   "iPhone": 201183,
+   "Mac": 29984,
+   "iPad": 26694,
+   "Wearables, Home and Accessories": 37005,
+   "Services": 96169,
+   "total": 391035,
+   "source": "FY2025 10-K (EDGAR accession 0000320193-25-000079, aapl-20250927.htm), Item 7 MD&A, 'Products and Services Performance' table, p.23 (2024 comparative column; matches FY2024 10-K accession 0000320193-24-000123)"
+  },
+  {
+   "year": 2025,
+   "iPhone": 209586,
+   "Mac": 33708,
+   "iPad": 28023,
+   "Wearables, Home and Accessories": 35686,
+   "Services": 109158,
+   "total": 416161,
+   "source": "FY2025 10-K (EDGAR accession 0000320193-25-000079, aapl-20250927.htm), Item 7 MD&A, 'Products and Services Performance' table, p.23"
+  }
+ ],
+ "geographic": [
+  {
+   "year": 2021,
+   "Americas": 153306,
+   "Europe": 89307,
+   "Greater China": 68366,
+   "Japan": 28482,
+   "Rest of Asia Pacific": 26356,
+   "total": 365817,
+   "source": "FY2021 10-K (0000320193-21-000105), Item 7 MD&A, 'Segment Operating Performance' table, p.22"
+  },
+  {
+   "year": 2022,
+   "Americas": 169658,
+   "Europe": 95118,
+   "Greater China": 74200,
+   "Japan": 25977,
+   "Rest of Asia Pacific": 29375,
+   "total": 394328,
+   "source": "FY2022 10-K (0000320193-22-000108), Item 7 MD&A, 'Segment Operating Performance' table, p.22"
+  },
+  {
+   "year": 2023,
+   "Americas": 162560,
+   "Europe": 94294,
+   "Greater China": 72559,
+   "Japan": 24257,
+   "Rest of Asia Pacific": 29615,
+   "total": 383285,
+   "source": "FY2023 10-K (0000320193-23-000106), Item 7 MD&A, 'Segment Operating Performance' table; confirmed in FY2025 10-K comparative column"
+  },
+  {
+   "year": 2024,
+   "Americas": 167045,
+   "Europe": 101328,
+   "Greater China": 66952,
+   "Japan": 25052,
+   "Rest of Asia Pacific": 30658,
+   "total": 391035,
+   "source": "FY2025 10-K (0000320193-25-000079), Item 7 MD&A, 'Segment Operating Performance' table, p.22 (2024 comparative column; matches FY2024 10-K 0000320193-24-000123)"
+  },
+  {
+   "year": 2025,
+   "Americas": 178353,
+   "Europe": 111032,
+   "Greater China": 64377,
+   "Japan": 28703,
+   "Rest of Asia Pacific": 33696,
+   "total": 416161,
+   "source": "FY2025 10-K (0000320193-25-000079), Item 7 MD&A, 'Segment Operating Performance' table, p.22"
+  }
+ ],
+ "grossMargin": {
+  "products": {
+   "2025": 36.8,
+   "2024": 37.2
+  },
+  "services": {
+   "2025": 75.4,
+   "2024": 73.9
+  },
+  "total": {
+   "2025": 46.9,
+   "2024": 46.2
+  },
+  "source": "FY2025 10-K (EDGAR accession 0000320193-25-000079, aapl-20250927.htm), Item 7 MD&A, 'Gross Margin' table, p.24 (gross margin dollars: Products $112,887M / Services $82,314M / Total $195,201M in 2025)"
+ },
+ "notes": "All figures verbatim from Apple 10-K filings fetched from SEC EDGAR (primary documents: aapl-20210925.htm, aapl-20220924.htm, aapl-20230930.htm, aapl-20240928.htm, aapl-20250927.htm). Money in US$ millions. Category name is 'Wearables, Home and Accessories' in all five filings including FY2025 (as filed). Apple's five reportable segments are geographic: Americas, Europe (includes India, Middle East, Africa), Greater China (China mainland, Hong Kong, Taiwan), Japan, Rest of Asia Pacific. FY2023 was a 53-week fiscal year (ended Sep 30, 2023); the other four are 52-week years. Per the FY2025 10-K, Services net sales include amortization of the deferred value of services bundled in the sales price of certain products; per FY2021/FY2022 10-Ks, Products net sales include amortization of deferred value of unspecified software upgrade rights. FY2024 and FY2023 values were cross-verified across two filings (comparative columns in the FY2025 and FY2023 10-Ks respectively) and are consistent; grand totals (e.g., FY2025 $416,161M) tie between the category and segment tables."
+}

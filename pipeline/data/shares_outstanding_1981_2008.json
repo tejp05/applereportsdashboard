@@ -1,0 +1,145 @@
+{
+ "sharesOutstanding": [
+  {
+   "fy": 1981,
+   "sharesM": 55.309,
+   "source": "Apple FY1982 annual report/10-K, Consolidated Statements of Shareholders' Equity: 'Balance at September 25, 1981 \u2014 55,309 (shares in thousands)'; reproduced in the Apple Computer, Inc. case (C. Gopal) in Rowe/Mason/Dickel, Strategic Management: A Methodological Approach (archive.org item strategicmanagem0000rowe; verified via retained-earnings/net-income chain: RE 57,026 = 17,606 + FY81 NI 39,420)"
+  },
+  {
+   "fy": 1982,
+   "sharesM": 57.123,
+   "source": "Apple FY1985 annual report, Consolidated Statements of Shareholders' Equity: 'Balance at September 24, 1982 \u2014 57,123 (thousands)'; reproduced in Imdieke & Smith, Financial Accounting, 1987 (archive.org financialaccount00imdi, Appendix: Apple Computer, Inc. annual report); corroborated by FY1982 statement in strategicmanagem0000rowe"
+  },
+  {
+   "fy": 1983,
+   "sharesM": 59.198,
+   "source": "Apple FY1985 annual report, Shareholders' Equity statement: 'Balance at September 30, 1983 \u2014 59,198 (thousands)'; reproduced in Imdieke & Smith, Financial Accounting, 1987 (archive.org financialaccount00imdi)"
+  },
+  {
+   "fy": 1984,
+   "sharesM": 60.535146,
+   "source": "Apple FY1985 balance sheet comparative: '61,849,802 shares issued and outstanding in 1985 (60,535,146 shares in 1984)'; reproduced in archive.org financialaccount00imdi; comparative line also in casesforstrategi0000barn, businessstrategy0000smit, financialaccount0000back"
+  },
+  {
+   "fy": 1985,
+   "sharesM": 61.849802,
+   "source": "Apple FY1985 balance sheet (Sep 27, 1985): 'Common stock, no par value; 160,000,000 shares authorized; 61,849,802 shares issued and outstanding'; reproduced identically in 4 archive.org books (financialaccount00imdi, casesforstrategi0000barn, businessstrategy0000smit, microsoftexcelbu0000kydc)"
+  },
+  {
+   "fy": 1986,
+   "sharesM": 62.627613,
+   "source": "DERIVED (exact arithmetic, not estimate): Apple FY1987 balance sheet shows 1986 comparative of 125,255,226 shares restated for the June 1987 2-for-1 split (miscasesinaction0000muns); as-reported pre-split FY1986 count = 125,255,226 / 2 = 62,627,613 (divides exactly). No direct reproduction of the FY1986 annual report was located"
+  },
+  {
+   "fy": 1987,
+   "sharesM": 126.088081,
+   "source": "Apple FY1987 balance sheet (Sep 25, 1987, post June-1987 2:1 split): 'Common stock, no par value; 320,000,000 shares authorized; 126,088,081 issued and outstanding in 1987 (125,255,226 shares in 1986)'; reproduced in Munson, MIS Cases in Action (archive.org miscasesinaction0000muns)"
+  },
+  {
+   "fy": 1988,
+   "sharesM": 122.768,
+   "source": "Apple FY1990 annual report, Shareholders' Equity statement: 'Balance at September 30, 1988 \u2014 122,768 (thousands), common stock $226,239, RE $776,453'; reproduced in Case 4.10 Apple Computer, Inc., Financial Accounting and Corporate Reporting: A Casebook (archive.org isbn_9780255166966)"
+  },
+  {
+   "fy": 1989,
+   "sharesM": 126.27,
+   "source": "Same FY1990 equity statement: 'Balance at September 29, 1989 \u2014 126,270 (thousands), RE $1,175,899, total equity $1,485,746' (archive.org isbn_9780255166966; FY1989 net income $454,033K matches Apple's reported $454.0M)"
+  },
+  {
+   "fy": 1990,
+   "sharesM": 115.359,
+   "source": "Apple FY1993 annual report equity statement 'Balance at September 28, 1990 \u2014 115,359 (thousands)' reproduced in two independent books (archive.org businessapplicat0000beat and fundamentalaccou0000lars_e0m1); also in FY1990/91 statements in isbn_9780255166966 (exact count OCR-read as 115,358,922, consistent with 115,359K rounding)"
+  },
+  {
+   "fy": 1991,
+   "sharesM": 118.385899,
+   "source": "Apple FY1991 balance sheet: 'Common stock, no par value, 320,000,000 shares authorized; 118,385,899 shares issued and outstanding' (archive.org isbn_9780255166966); cross-confirmed by FY1994 10-K equity statement 'Balance at September 27, 1991 \u2014 118,386 (thousands)' (SEC EDGAR 0000320193-94-000016)"
+  },
+  {
+   "fy": 1992,
+   "sharesM": 118.479,
+   "source": "Apple FY1994 10-K, Consolidated Statements of Shareholders' Equity: 'Balance at September 25, 1992 \u2014 118,479 (shares in thousands)' \u2014 https://www.sec.gov/Archives/edgar/data/320193/0000320193-94-000016.txt"
+  },
+  {
+   "fy": 1993,
+   "sharesM": 116.147035,
+   "source": "Apple FY1994 10-K balance sheet comparative: '119,542,527 shares issued and outstanding in 1994 (116,147,035 shares in 1993)' \u2014 https://www.sec.gov/Archives/edgar/data/320193/0000320193-94-000016.txt"
+  },
+  {
+   "fy": 1994,
+   "sharesM": 119.542527,
+   "source": "FY1994 10-K balance sheet (Sep 30, 1994): 119,542,527 shares issued and outstanding \u2014 https://www.sec.gov/Archives/edgar/data/320193/0000320193-94-000016.txt"
+  },
+  {
+   "fy": 1995,
+   "sharesM": 122.921601,
+   "source": "FY1995 10-K balance sheet (Sep 29, 1995): 122,921,601 shares issued and outstanding \u2014 https://www.sec.gov/Archives/edgar/data/320193/0000320193-95-000016.txt"
+  },
+  {
+   "fy": 1996,
+   "sharesM": 124.496972,
+   "source": "FY1996 10-K balance sheet (Sep 27, 1996): 124,496,972 shares issued and outstanding \u2014 https://www.sec.gov/Archives/edgar/data/320193/0000320193-96-000023.txt (also FY1997 10-K comparative)"
+  },
+  {
+   "fy": 1997,
+   "sharesM": 127.94922,
+   "source": "FY1997 10-K balance sheet (Sep 26, 1997): 127,949,220 shares issued and outstanding \u2014 https://www.sec.gov/Archives/edgar/data/320193/0001047469-97-006960.txt"
+  },
+  {
+   "fy": 1998,
+   "sharesM": 135.192769,
+   "source": "FY1998 10-K balance sheet (Sep 25, 1998): 135,192,769 shares issued and outstanding \u2014 https://www.sec.gov/Archives/edgar/data/320193/0001047469-98-044981.txt"
+  },
+  {
+   "fy": 1999,
+   "sharesM": 160.799061,
+   "source": "FY1999 10-K balance sheet (Sep 25, 1999): 160,799,061 shares issued and outstanding (pre June-2000 2:1 split, as reported) \u2014 https://www.sec.gov/Archives/edgar/data/320193/0000912057-99-010244.txt"
+  },
+  {
+   "fy": 2000,
+   "sharesM": 335.676889,
+   "source": "FY2000 10-K balance sheet (Sep 30, 2000): 335,676,889 shares issued and outstanding (post June-2000 2:1 split) \u2014 https://www.sec.gov/Archives/edgar/data/320193/000091205700053623/0000912057-00-053623.txt"
+  },
+  {
+   "fy": 2001,
+   "sharesM": 350.921661,
+   "source": "FY2001 10-K balance sheet (Sep 29, 2001): 350,921,661 shares issued and outstanding \u2014 SEC EDGAR accession 0000912057-01-544436"
+  },
+  {
+   "fy": 2002,
+   "sharesM": 358.958989,
+   "source": "FY2002 10-K balance sheet (Sep 28, 2002): 358,958,989 shares issued and outstanding \u2014 SEC EDGAR accession 0001047469-02-007674"
+  },
+  {
+   "fy": 2003,
+   "sharesM": 366.726584,
+   "source": "FY2003 10-K balance sheet (Sep 27, 2003): 366,726,584 shares issued and outstanding \u2014 SEC EDGAR accession 0001047469-03-041604"
+  },
+  {
+   "fy": 2004,
+   "sharesM": 391.443617,
+   "source": "FY2004 10-K balance sheet (Sep 25, 2004, pre Feb-2005 split): 391,443,617 shares issued and outstanding \u2014 SEC EDGAR accession 0001047469-04-035975"
+  },
+  {
+   "fy": 2005,
+   "sharesM": 835.019364,
+   "source": "FY2005 10-K balance sheet (Sep 24, 2005, post Feb-2005 2:1 split): 835,019,364 shares issued and outstanding \u2014 SEC EDGAR accession 0001104659-05-058421"
+  },
+  {
+   "fy": 2006,
+   "sharesM": 855.262568,
+   "source": "FY2006 10-K balance sheet (Sep 30, 2006): 855,262,568 shares issued and outstanding \u2014 SEC EDGAR accession 0001104659-06-084288"
+  },
+  {
+   "fy": 2007,
+   "sharesM": 872.328972,
+   "source": "FY2007 10-K balance sheet (Sep 29, 2007): 872,328,972 shares issued and outstanding \u2014 SEC EDGAR accession 0001047469-07-009340"
+  },
+  {
+   "fy": 2008,
+   "sharesM": 888.325973,
+   "source": "FY2008 10-K balance sheet (Sep 27, 2008): 888,325,973 shares issued and outstanding \u2014 https://www.sec.gov/Archives/edgar/data/320193/000119312508224958/d10k.htm"
+  }
+ ],
+ "notes": "All figures are period-end (fiscal year end) common shares issued and outstanding, as reported at the time, with no retroactive split adjustments. FY1994-FY2008 are taken directly from balance sheets in SEC EDGAR 10-K filings (CIK 0000320193); FY1992 from the FY1994 10-K's shareholders' equity statement (thousands precision). FY1981-FY1991 predate EDGAR (Apple's first electronic filing was Jan 1994); those figures come from Apple's own annual-report financial statements as reproduced verbatim in period accounting/strategy textbooks and casebooks digitized on archive.org, with multi-source and net-income/retained-earnings chain cross-checks. Precision: FY1984, FY1985, FY1987, FY1991, FY1993-FY2008 are exact to the share; FY1981-FY1983, FY1988-FY1990, FY1992 are as published in equity statements in thousands of shares (max rounding error 500 shares). FY1986 is the one derived value: the FY1987 balance sheet's 1986 comparative (125,255,226) was restated for the June 1987 2:1 split, so the as-reported figure is exactly half (62,627,613); it divides evenly, but treat that year with slightly lower confidence since no direct FY1986-report reproduction was found. Sanity anchors all matched: FY1997 127.9M, FY2000 335.7M, FY2005 835.0M, FY2008 888.3M. Note that 10-K cover-page counts (e.g., 161,158,987 as of Dec 10, 1999) are dated 6-11 weeks after fiscal year end and intentionally NOT used where balance-sheet figures were available. Splits during the period: 2:1 June 1987, 2:1 June 2000, 2:1 Feb 2005 (visible as level shifts in FY1987, FY2000, FY2005)."
+}

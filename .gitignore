@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+
+# editor
+.vscode/
+.idea/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+
+# local Claude Code settings
+.claude/settings.local.json
+
+# large raw source data (regenerable via the fetch scripts; derived JSONs are kept)
+pipeline/data/sec_companyfacts_aapl.json
+pipeline/data/aapl_daily_yahoo_raw.json
+pipeline/data/hist_GSPC_daily.json
+pipeline/data/peer_*_daily.json

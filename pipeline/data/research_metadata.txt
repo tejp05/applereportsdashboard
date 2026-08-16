@@ -1,0 +1,79 @@
+```json
+{
+  "company": {
+    "founded": "1976-04-01",
+    "founded_note": "Founded as a partnership by Jobs, Wozniak, and Wayne on April 1, 1976",
+    "names": [
+      {
+        "name": "Apple Computer, Inc.",
+        "from": "1977-01-03",
+        "to": "2007-01-09",
+        "note": "Incorporated January 3, 1977"
+      },
+      {
+        "name": "Apple Inc.",
+        "from": "2007-01-09",
+        "to": null,
+        "note": "Renamed January 9, 2007, announced by Steve Jobs at Macworld alongside the iPhone unveiling"
+      }
+    ],
+    "sources": [
+      "https://www.computerhistory.org/tdih/january/3/",
+      "https://en.wikipedia.org/wiki/Apple_Inc."
+    ]
+  },
+  "leadership": [
+    { "name": "Michael Scott", "role": "CEO", "from": 1977, "to": 1981, "exact": "Feb 1977 – Mar 1981" },
+    { "name": "Mike Markkula", "role": "CEO", "from": 1981, "to": 1983, "exact": "1981 – Apr 1983 (until Sculley hired Apr 8, 1983)" },
+    { "name": "John Sculley", "role": "CEO", "from": 1983, "to": 1993, "exact": "Apr 8, 1983 – Jun 18, 1993" },
+    { "name": "Michael Spindler", "role": "CEO", "from": 1993, "to": 1996, "exact": "Jun 18, 1993 – Feb 2, 1996" },
+    { "name": "Gil Amelio", "role": "CEO", "from": 1996, "to": 1997, "exact": "Feb 2, 1996 – Jul 9, 1997 (ousted by board)" },
+    { "name": "Steve Jobs", "role": "interim CEO 1997-2000, CEO 2000-2011", "from": 1997, "to": 2011, "exact": "Interim CEO Sep 16, 1997; dropped 'interim' Jan 5, 2000; resigned Aug 24, 2011" },
+    { "name": "Tim Cook", "role": "CEO", "from": 2011, "to": null, "exact": "Aug 24, 2011 – present (as of 2026-08-16)" }
+  ],
+  "leadership_notes": "Verified 2026-08-16: Tim Cook is still CEO today, but Apple announced (Apple Newsroom, Apr 2026) that John Ternus becomes CEO effective Sep 1, 2026, with Cook moving to executive chairman. For a dashboard covering 1977-2025, Cook to:null is correct. Sculley->Spindler transition verified as Jun 18, 1993 (some secondary sources wrongly say Oct 1993). Fred Anderson served briefly as acting CEO Jul-Sep 1997 between Amelio's ouster and Jobs's interim appointment; excluded per task's canonical 7-CEO list.",
+  "leadership_sources": [
+    "https://www.apple.com/newsroom/2026/04/tim-cook-to-become-apple-executive-chairman-john-ternus-to-become-apple-ceo/",
+    "https://en.wikipedia.org/wiki/Michael_Spindler",
+    "https://thisdayintechhistory.com/07/09/gil-amelio-ousted-from-apple/",
+    "https://thisdayintechhistory.com/09/16/steve-jobs-named-interim-ceo-of-apple/",
+    "https://theorg.com/iterate/history-of-apple-ceos"
+  ],
+  "eras": [
+    { "label": "Apple II era", "from": 1977, "to": 1983 },
+    { "label": "Macintosh & Sculley", "from": 1984, "to": 1993 },
+    { "label": "Mid-90s crisis", "from": 1994, "to": 1997 },
+    { "label": "Jobs return: iMac & iPod", "from": 1998, "to": 2006 },
+    { "label": "iPhone revolution", "from": 2007, "to": 2011 },
+    { "label": "Cook: services & wearables", "from": 2012, "to": 2019 },
+    { "label": "Apple Silicon & AI", "from": 2020, "to": 2025 }
+  ],
+  "milestones": [
+    { "year": 1977, "event": "Apple II debuts (April), the personal computer that builds the company" },
+    { "year": 1980, "event": "IPO Dec 12 at $22/share, biggest US offering since Ford in 1956" },
+    { "year": 1984, "event": "Macintosh launches Jan 24, introduced by the famous '1984' Super Bowl ad" },
+    { "year": 1985, "event": "Steve Jobs resigns Sep 17 after power struggle with Sculley; founds NeXT" },
+    { "year": 1997, "event": "Near-bankruptcy: Jobs returns via NeXT deal; Microsoft invests $150M Aug 6" },
+    { "year": 1998, "event": "iMac G3 unveiled May 6; design-led turnaround returns Apple to profit" },
+    { "year": 2001, "event": "iPod launches Oct 23; first Apple retail stores open May 19" },
+    { "year": 2007, "event": "iPhone unveiled Jan 9; company renamed Apple Inc. the same day" },
+    { "year": 2008, "event": "App Store opens Jul 10 with 500 apps, creating the app economy" },
+    { "year": 2010, "event": "iPad unveiled Jan 27, defining the modern tablet category" },
+    { "year": 2011, "event": "Tim Cook named CEO Aug 24; Steve Jobs dies Oct 5" },
+    { "year": 2015, "event": "Apple Watch ships Apr 24, Apple's first new category under Cook" },
+    { "year": 2018, "event": "First US public company to reach $1 trillion market cap (Aug 2)" },
+    { "year": 2020, "event": "M1 chip debuts Nov 10, starting Mac transition to Apple Silicon" },
+    { "year": 2022, "event": "First company to touch $3 trillion market value (Jan 3, intraday)" },
+    { "year": 2024, "event": "Apple Intelligence unveiled at WWDC Jun 10; ships Oct 28 in iOS 18.1" }
+  ],
+  "milestones_notes": "Exactly 16 entries, all <=80 chars. Dropped from candidate list to fit 16: Newton (1993), iTunes Music Store (2003, Apr 28), Intel transition (2005), Vision Pro (US launch Feb 2, 2024 - folded conceptually into the Apple Silicon & AI era). $3T (Jan 3, 2022) was an intraday milestone; first close above $3T was Jun 30, 2023.",
+  "milestones_sources": [
+    "https://www.cnbc.com/2018/08/02/apple-hits-1-trillion-in-market-value.html",
+    "https://www.cnbc.com/2022/01/03/apple-becomes-first-us-company-to-reach-3-trillion-market-cap.html",
+    "https://www.cnbc.com/2024/06/10/apple-wwdc-live-updates.html",
+    "https://www.macrumors.com/2024/10/06/apple-to-release-ios-18-1-on-october-28/",
+    "https://appleinsider.com/articles/18/07/10/gil-amelio-resigned-at-apple-ceo-21-years-ago-paving-the-way-for-steve-jobs-ascension-as-ceo",
+    "https://www.computerhistory.org/tdih/january/3/"
+  ]
+}
+```
