@@ -7079,7 +7079,11 @@
   /* ====================================================================== */
   try {
     document.getElementById("genStamp").textContent = "Data generated " + D.generated + ".";
-    document.getElementById("dataTag").textContent = `${fin.length} years`;
+    // Company age, not the row count: Apple was founded April 1, 1976, so the
+    // badge tracks the same 1976-onward span as the brand line in the top bar.
+    const FOUNDED = 1976;
+    document.getElementById("dataTag").textContent =
+      `${new Date().getFullYear() - FOUNDED} years`;
     buildFYChips();
     renderFY(Y1);
     renderSnapshot(Y1);
