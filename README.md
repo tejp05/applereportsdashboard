@@ -20,24 +20,39 @@ There is nothing to build:
   filing" excerpts need http(s), and live widgets (ticker, quotes) hide
   themselves when no live server is reachable.
 
-## Deploy (Cloudflare Pages)
+## Deploy (Cloudflare Workers)
 
-The site is pure static files — Cloudflare Pages serves it as-is:
+Live: <https://applereportsdashboard.tej-p-patel1.workers.dev/>
 
-1. Push this folder to a GitHub repo.
-2. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git**.
-3. Pick the repo. Framework preset: **None**. Build command: *(leave empty)*.
-   Build output directory: `/`.
-4. Deploy. Done — no functions, no environment variables needed.
+The site deploys as a **Worker with static assets**: `worker.js` serves the API
+routes and hands everything else to the `ASSETS` binding (config in
+`wrangler.toml`). The repo is connected to Cloudflare via Workers Builds, so
+pushing to `main` redeploys automatically.
 
-(Netlify / GitHub Pages / Vercel static work identically: no build step, publish
-the repo root.)
+Manual deploy, if ever needed:
 
-Live features degrade gracefully with no server: the SEC-filings cards fall back
-to fetching SEC EDGAR directly (CORS-open), the live quote falls back to the
-baked fiscal-year-end figures, and the ticker/peer-quote strips stay hidden. A
-live-features server can be added later and pointed at with `?agent=https://host`
-(persisted; `?agent=clear` resets).
+```bash
+npx wrangler deploy
+```
+
+`.assetsignore` keeps the pipeline internals and server files out of the
+public asset bundle.
+
+### Live endpoints the Worker provides
+
+| Route | Source | Feeds |
+|---|---|---|
+| `/quote?symbol=` | Yahoo Finance | hero quote + live market-cap estimate |
+| `/quotes?symbols=` | Yahoo Finance | scrolling ticker, peer pill rows |
+| `/quote/intraday?symbol=` | Yahoo Finance | intraday sparkline |
+| `/quote/history?symbol=&range=` | Yahoo Finance | Story Mode live price extension |
+| `/filings/latest` | SEC EDGAR | latest 10-K / 10-Q / earnings 8-K card |
+| `/filings/xbrl` | SEC EDGAR XBRL | last 5 quarters: revenue bars, EPS headline |
+
+These exist because Yahoo Finance and SEC's XBRL API do not send CORS headers,
+so the browser cannot call them directly. `serve.py` implements the same six
+routes for local development. Every widget degrades gracefully if the routes
+are unreachable — the site still works fully from the baked dataset.
 
 ## Files
 

@@ -1,8 +1,8 @@
 name = "applereportsdashboard"
 compatibility_date = "2024-01-01"
+main = "worker.js"
 
-# Cloudflare Pages: serve all static files from root as assets
 [assets]
 directory = "."
-include = ["*.html", "*.js", "*.css", "*.json", "*.csv", "*.txt"]
-exclude = ["node_modules", ".git", "*.py", ".wrangler", "pipeline"]
+binding = "ASSETS"
+not_found_handling = "none"

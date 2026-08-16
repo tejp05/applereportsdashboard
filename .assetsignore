@@ -1,0 +1,24 @@
+# Files in this repo that should NOT be published as public static assets.
+# The Worker (worker.js) serves everything else via the ASSETS binding.
+# Story Mode fetches pipeline/raw/text/*.txt at runtime, so that stays public.
+
+# server / build files
+worker.js
+wrangler.toml
+package.json
+serve.py
+.assetsignore
+.gitignore
+
+# docs & tooling
+README.md
+.claude/
+
+# data pipeline internals (source of truth for data.js, not needed by the browser)
+pipeline/data/
+pipeline/*.py
+pipeline/*.md
+
+# staging copies and research inputs
+letters_raw/
+Competitor Data/
