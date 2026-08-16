@@ -6,7 +6,7 @@
   <title>Apple Through the Years — Annual Reports Dashboard</title>
   <meta name="description" content="Fifty years of Apple, drawn directly from the annual reports and 10-K filings (1977–2025)." />
   <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23f5f5f7" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.033 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>' />
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="styles.css?v=7" />
 </head>
 <body>
   <!-- ===== Top bar ===== -->
@@ -234,10 +234,11 @@
         <div class="intel-card benchmark-card" id="benchmarkCard">
 
           <!-- Three equal-width chart mode buttons -->
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
             <button class="reg-preset-btn active" id="chartModeTR"      data-mode="totalReturn" style="text-align:center;">Apple vs S&amp;P Benchmarks</button>
             <button class="reg-preset-btn"         id="chartModeEV"      data-mode="evEbitda"    style="text-align:center;">Competitor Net Margin</button>
             <button class="reg-preset-btn"         id="chartModeScatter" data-mode="scatter"     style="text-align:center;">Growth vs Profitability</button>
+            <button class="reg-preset-btn"         id="chartModeVal"     data-mode="valuation"   style="text-align:center;">Valuation Multiples</button>
           </div>
 
           <!-- Filter + canvas — always visible -->
@@ -322,6 +323,20 @@
 
                   </div><!-- /ev-filter-groups -->
                 </div><!-- /ev-filter-row -->
+              </div>
+
+              <!-- Valuation filters -->
+              <div id="valuation-toggles" style="display:none;flex-direction:column;gap:10px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:8px;">
+                  <span style="color:var(--ink);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;">Valuation Multiple</span>
+                  <span style="color:var(--ink-dim);font-size:11px;" id="valAsOf"></span>
+                </div>
+                <div class="ev-pills" style="padding-top:2px;">
+                  <button class="ev-pill val-metric active" data-metric="pe" style="--pill-color:#0071e3;">P / E (TTM)</button>
+                  <button class="ev-pill val-metric" data-metric="ps" style="--pill-color:#bf5af2;">P / Sales (TTM)</button>
+                  <button class="ev-pill val-metric" data-metric="pb" style="--pill-color:#30d158;">P / Book</button>
+                  <button class="ev-pill val-metric" data-metric="marketCap" style="--pill-color:#ff9f0a;">Market cap</button>
+                </div>
               </div>
 
               <!-- Scatter filters — same Apple + sector group layout -->
@@ -502,7 +517,7 @@
           <li>IDC &middot; Counterpoint Research</li>
         </ul>
         <p class="comp-sources-note">
-          Peer financials, margins and market data on this tab are drawn from the
+          Peer financials, margins, valuation multiples and market data on this tab are drawn from the
           sources above. Product-category definitions are Apple&rsquo;s own, as stated in its
           10-K; the SWOT, BCG and Five Forces framings are analytical interpretations built on
           that reported data, not vendor-published ratings.
@@ -591,10 +606,10 @@
       if (v) window.LIVE_AGENT_URL = v;
     } catch (_) {} })();
   </script>
-  <script src="data.js?v=5"></script>
+  <script src="data.js?v=7"></script>
   <script src="Story Mode/aapl_daily_prices.js"></script>
-  <script src="charts.js?v=5"></script>
-  <script src="app.js?v=5"></script>
-  <script src="regression.js?v=5"></script>
+  <script src="charts.js?v=7"></script>
+  <script src="app.js?v=7"></script>
+  <script src="regression.js?v=7"></script>
 </body>
 </html>

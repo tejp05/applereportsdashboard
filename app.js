@@ -3226,8 +3226,14 @@
 
       // Build value domain
       let vals = [];
+      // Live market cap (price x latest disclosed shares) extends the annual
+      // filing series to today whenever a quote is available.
+      const liveCapB = (window.__liveQuote && window.__liveQuote.capEstM)
+        ? window.__liveQuote.capEstM / 1000 : null;
+      const liveCapUsable = liveCapB != null && yr1 >= (new Date().getFullYear() - 1);
       if (heroActiveLayer === "marketCap") {
         vals = annFin.filter(d => d.marketCap != null).map(d => d.marketCap / 1000);
+        if (liveCapUsable) vals.push(liveCapB);
       } else if (heroActiveLayer === "dividends") {
         vals = annFin.filter(d => d.dividendsPerShare != null).map(d => d.dividendsPerShare);
         // also include price as reference line
@@ -3286,7 +3292,16 @@
 
       // ── Grid lines ─────────────────────────────────────────────────────
       const yRange = vMax - vMin;
-      const yStep  = yRange > 500 ? 100 : yRange > 100 ? 50 : yRange > 20 ? 10 : yRange > 5 ? 2 : 1;
+      // Pick a "nice" step targeting ~7 gridlines. The old fixed ladder capped
+      // the step at 100, so the market-cap layer (0-4000 $B) drew 40 overlapping
+      // labels; this scales cleanly from $0.07 prices to $4T market caps.
+      const yStep = (function () {
+        const raw = yRange / 7;
+        if (!(raw > 0)) return 1;
+        const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+        const n = raw / mag;
+        return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * mag;
+      })();
       const yFirst = Math.ceil(vMin / yStep) * yStep;
       for (let v = yFirst; v <= vMax; v += yStep) {
         const gy = yp(v);
@@ -3329,6 +3344,10 @@
       if (heroActiveLayer === "marketCap") {
         // Annual market cap as area
         const mcPts = annFin.filter(d => d.marketCap != null).map(d => ({ yr: d.year, v: d.marketCap / 1000 }));
+        if (liveCapUsable && mcPts.length) {
+          const nowFrac = new Date().getFullYear() + (new Date().getMonth() / 12);
+          if (nowFrac > mcPts[mcPts.length - 1].yr) mcPts.push({ yr: nowFrac, v: liveCapB, live: true });
+        }
         if (mcPts.length >= 2) {
           const aD = [`M ${xp(mcPts[0].yr)} ${PAD.top + ih}`];
           mcPts.forEach(pt => aD.push(`L ${xp(pt.yr)} ${yp(pt.v)}`));
@@ -3343,6 +3362,20 @@
           line.setAttribute("stroke", "#64d2ff"); line.setAttribute("stroke-width", "2");
           line.setAttribute("stroke-linejoin", "round");
           svg.appendChild(line);
+          const lastMc = mcPts[mcPts.length - 1];
+          if (lastMc.live) {
+            const dot = document.createElementNS(SVGNS, "circle");
+            dot.setAttribute("cx", xp(lastMc.yr)); dot.setAttribute("cy", yp(lastMc.v));
+            dot.setAttribute("r", "4"); dot.setAttribute("fill", "#64d2ff");
+            dot.setAttribute("stroke", "var(--bg)"); dot.setAttribute("stroke-width", "1.5");
+            svg.appendChild(dot);
+            const lt = document.createElementNS(SVGNS, "text");
+            lt.setAttribute("x", xp(lastMc.yr) - 8); lt.setAttribute("y", yp(lastMc.v) - 10);
+            lt.setAttribute("text-anchor", "end"); lt.setAttribute("font-size", "10.5");
+            lt.setAttribute("fill", "#64d2ff"); lt.setAttribute("font-family", "var(--mono)");
+            lt.textContent = `live $${(lastMc.v / 1000).toFixed(2)}T`;
+            svg.appendChild(lt);
+          }
         }
       } else {
         // Quarterly price area fill
@@ -7472,6 +7505,56 @@
           }
         });
 
+      } else if (mode === "valuation") {
+        // Cross-sectional comparison at a point in time, so a ranked bar chart
+        // rather than a time series. Reported multiples; peers with negative
+        // book equity are shown as "n/m" instead of a misleading bar.
+        const V = (((window.AAPL_DATA || {}).valuation || {}).peers) || [];
+        const metric = (document.querySelector("#valuation-toggles .val-metric.active") || {}).dataset?.metric || "pe";
+        const LBL = { pe: "P / E (TTM)", ps: "P / Sales (TTM)", pb: "P / Book", marketCap: "Market cap ($T)" };
+        const pick = p => metric === "pe" ? (p.peComputed ?? p.peReported)
+                        : metric === "marketCap" ? p.marketCap / 1e12
+                        : p[metric];
+        const shown = V.filter(p => pick(p) != null).sort((a, b) => pick(b) - pick(a));
+        const excluded = V.filter(p => pick(p) == null);
+        chartLabels = shown.map(p => p.name);
+        chartDatasets = [{
+          label: LBL[metric],
+          data: shown.map(p => +pick(p).toFixed(2)),
+          backgroundColor: shown.map(p => p.ticker === "AAPL" ? "#0071e3" : (competitorColors[p.ticker] || "#8d8d8d")),
+          borderColor: shown.map(p => p.ticker === "AAPL" ? "#2997ff" : "transparent"),
+          borderWidth: shown.map(p => p.ticker === "AAPL" ? 2 : 0),
+          borderRadius: 5,
+        }];
+        const asOfEl = document.getElementById("valAsOf");
+        if (asOfEl) asOfEl.textContent =
+          `as of ${((window.AAPL_DATA || {}).valuation || {}).asOf || ""}` + (excluded.length
+            ? ` · n/m: ${excluded.map(p => p.name).join(", ")} (negative book equity)` : "");
+        if (mainChartInstance) mainChartInstance.destroy();
+        mainChartInstance = new Chart(ctx, {
+          type: "bar",
+          data: { labels: chartLabels, datasets: chartDatasets },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: { callbacks: { label: item => {
+                const p = shown[item.dataIndex];
+                const v = item.parsed.y;
+                const val = metric === "marketCap" ? `$${v.toFixed(2)}T` : `${v.toFixed(2)}x`;
+                return [`${LBL[metric]}: ${val}`,
+                        `TTM revenue: $${p.ttmRevenueB.toFixed(1)}B`,
+                        `TTM net income: $${p.ttmNetIncomeB.toFixed(1)}B`];
+              } } },
+            },
+            scales: {
+              x: { ticks: { color: "#9a9aa7" }, grid: { display: false } },
+              y: { beginAtZero: true, ticks: { color: "#9a9aa7" }, grid: { color: "#1f2535" },
+                   title: { display: true, text: LBL[metric], color: "#6c6c78", font: { size: 11 } } },
+            },
+          },
+        });
+        return;
       } else {
         chartLabels = actualMarginData.years;
         var combinedData = [];
@@ -7685,7 +7768,8 @@
       var modeButtons = [
         document.getElementById("chartModeTR"),
         document.getElementById("chartModeEV"),
-        document.getElementById("chartModeScatter")
+        document.getElementById("chartModeScatter"),
+        document.getElementById("chartModeVal")
       ].filter(Boolean);
       var trDiv  = document.getElementById("total-return-toggles");
       var evDiv  = document.getElementById("ev-ebitda-toggles");
@@ -7699,6 +7783,8 @@
           btn.classList.add("active");
           if (trDiv) trDiv.style.display = mode === "totalReturn" ? "flex" : "none";
           if (evDiv) evDiv.style.display = mode === "evEbitda"    ? "flex" : "none";
+          const valDiv = document.getElementById("valuation-toggles");
+          if (valDiv) valDiv.style.display = mode === "valuation" ? "flex" : "none";
           if (scDiv) scDiv.style.display = mode === "scatter"     ? "flex" : "none";
           currentMode = mode;
           if (mode === "scatter") { renderScatter(); } else { render(); }
@@ -7773,6 +7859,15 @@
         document.querySelectorAll("#ev-ebitda-toggles .ev-cb").forEach(function(b) { b.classList.remove("active"); });
         ["aapl","platforms","silicon","hardware","content"].forEach(syncSectorBtn);
         render();
+      });
+
+      /* Valuation metric pills */
+      document.querySelectorAll("#valuation-toggles .val-metric").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          document.querySelectorAll("#valuation-toggles .val-metric").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          render();
+        });
       });
 
       /* Trendline checkbox */
