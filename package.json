@@ -1,0 +1,10 @@
+{
+  "name": "applereportsdashboard",
+  "version": "1.0.0",
+  "description": "Apple Through the Years - Static site with Cloudflare Pages Functions",
+  "private": true,
+  "scripts": {
+    "build": "echo 'Static site - no build needed'",
+    "deploy": "echo 'Deployed to Cloudflare Pages'"
+  }
+}

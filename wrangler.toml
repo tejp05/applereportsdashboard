@@ -1,0 +1,14 @@
+name = "applereportsdashboard"
+type = "javascript"
+compatibility_date = "2024-01-01"
+
+# Cloudflare Pages configuration - this tells wrangler it's a Pages project
+# The build command should be empty in the Cloudflare dashboard
+[build]
+command = ""
+cwd = "."
+
+# If wrangler tries to run, it knows to treat functions/ as edge functions
+# and serve static files from the root
+[env.production]
+name = "applereportsdashboard"
