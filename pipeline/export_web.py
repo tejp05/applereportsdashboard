@@ -61,6 +61,7 @@ def main():
     ma_perf = load("ma_performance.json", optional=True)
     quarterly = load("quarterly_aapl.json", optional=True)
     valuation = load("valuation_peers.json", optional=True)
+    fred = load("fred_macro.json", optional=True)
 
     divisor = {int(k): v for k, v in ms["fySplitDivisor"].items()}
     fy_adj_close = {int(k): v for k, v in ms["fyEndSplitAdjClose"].items()}
@@ -289,6 +290,13 @@ def main():
     macro["aaplShortTermDebt"] = st
     macro["aaplInterestExpense"] = ie
     macro["aaplCostOfDebt"] = cod
+    # FRED series the dashboard previously had as PENDING — these are what the
+    # Fed-funds and unemployment cards were waiting on, plus the corporate-bond
+    # curves for the Apple-vs-market cost-of-borrowing comparison.
+    if fred:
+        for k, v in fred["series"].items():
+            macro[k] = v
+
     macro["sources"] = {
         "aaplMonthlyPrice": "Yahoo Finance AAPL, first-trading-day-of-month close (Jan/Apr/Jul/Oct), split-adjusted",
         "aaplTotalReturn": "Yahoo Finance AAPL adjusted close (dividends + splits), calendar-year change",
@@ -298,7 +306,7 @@ def main():
         "aaplCostOfDebt": "SEC XBRL us-gaap:InterestExpense / average total debt (10-K balance sheets); Apple stopped disclosing interest expense separately after FY2022",
         "aaplDebt": "SEC XBRL: CommercialPaper + LongTermDebtCurrent + LongTermDebtNoncurrent, as reported",
         "macroSeries": "Inherited from the shared macro dataset: FRED (GDPA, CPIAUCSL), Yahoo Finance (^GSPC, ^IXIC, ^DJI, XLK, ^SP500TR, treasury tickers), NBER recession chronology",
-        "fedFundsRate": "PENDING", "unemploymentRate": "PENDING",
+        **(fred["sources"] if fred else {}),
     }
 
     # ---------------- M&A ----------------

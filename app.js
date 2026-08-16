@@ -302,10 +302,28 @@
              no data. */
           revealMacroCards();
           window._spReturnDraw && window._spReturnDraw();
+          /* Same 0x0 problem: these two build during boot, when the panel may
+             not be active yet, and previously only redrew on window resize —
+             so landing directly on #macro left both cards blank. */
+          window._macroEconDraw && window._macroEconDraw();
+          window._bondYieldDraw && window._bondYieldDraw();
           hideEmptyMacroCharts();
           hideOrphanMacroSectionHeaders();
         } catch (e) { console.error("macro redraw failed:", e); }
       });
+      /* One rAF is not always enough on a cold hash deep-link (#macro): the
+         panel can still measure 0-width in that frame, so the SVG builders
+         draw nothing. Re-run once layout has settled, then sweep again. */
+      setTimeout(() => {
+        try {
+          revealMacroCards();
+          window._macroEconDraw && window._macroEconDraw();
+          window._bondYieldDraw && window._bondYieldDraw();
+          window._spReturnDraw && window._spReturnDraw();
+          hideEmptyMacroCharts();
+          hideOrphanMacroSectionHeaders();
+        } catch (e) { console.error("macro settle redraw failed:", e); }
+      }, 180);
     }
     if (name === "ma" && window._maSwimScrollToEnd) {
       /* Wrap had zero scrollWidth while panel was hidden; scroll to the recent deals now it is visible */
@@ -4102,39 +4120,21 @@
     if (!root) return;
 
     /* ── data ── */
-    const DATA = [
-      { year:1970, fedFunds:7.18,  gdp:-0.17, cpi:5.7,  unemployment:4.9  },
-      { year:1973, fedFunds:10.5,  gdp:4.02,  cpi:6.2,  unemployment:4.9  },
-      { year:1975, fedFunds:5.82,  gdp:2.55,  cpi:9.1,  unemployment:8.2  },
-      { year:1978, fedFunds:7.94,  gdp:6.66,  cpi:7.6,  unemployment:6.0  },
-      { year:1980, fedFunds:13.35, gdp:-0.04, cpi:13.5, unemployment:7.2  },
-      { year:1981, fedFunds:16.39, gdp:1.30,  cpi:10.3, unemployment:8.5  },
-      { year:1982, fedFunds:12.24, gdp:-1.44, cpi:6.2,  unemployment:10.8 },
-      { year:1985, fedFunds:8.10,  gdp:4.18,  cpi:3.6,  unemployment:7.0  },
-      { year:1990, fedFunds:8.10,  gdp:0.60,  cpi:5.4,  unemployment:5.6  },
-      { year:1993, fedFunds:3.02,  gdp:2.61,  cpi:3.0,  unemployment:6.9  },
-      { year:1995, fedFunds:5.83,  gdp:2.20,  cpi:2.8,  unemployment:5.6  },
-      { year:1998, fedFunds:5.35,  gdp:4.88,  cpi:1.6,  unemployment:4.5  },
-      { year:2000, fedFunds:6.24,  gdp:2.91,  cpi:3.4,  unemployment:4.0  },
-      { year:2001, fedFunds:3.88,  gdp:0.17,  cpi:2.8,  unemployment:4.7  },
-      { year:2003, fedFunds:1.13,  gdp:4.30,  cpi:2.3,  unemployment:6.0  },
-      { year:2005, fedFunds:3.22,  gdp:2.97,  cpi:3.4,  unemployment:5.1  },
-      { year:2007, fedFunds:5.02,  gdp:2.13,  cpi:2.8,  unemployment:4.6  },
-      { year:2008, fedFunds:1.92,  gdp:-2.54, cpi:3.8,  unemployment:5.8  },
-      { year:2009, fedFunds:0.16,  gdp:0.11,  cpi:-0.4, unemployment:9.3  },
-      { year:2011, fedFunds:0.10,  gdp:1.54,  cpi:3.2,  unemployment:8.9  },
-      { year:2013, fedFunds:0.11,  gdp:3.01,  cpi:1.5,  unemployment:7.4  },
-      { year:2015, fedFunds:0.13,  gdp:2.12,  cpi:0.1,  unemployment:5.3  },
-      { year:2017, fedFunds:1.00,  gdp:2.99,  cpi:2.1,  unemployment:4.4  },
-      { year:2019, fedFunds:2.16,  gdp:3.35,  cpi:1.8,  unemployment:3.7  },
-      { year:2020, fedFunds:0.36,  gdp:-0.92, cpi:1.2,  unemployment:8.1  },
-      { year:2021, fedFunds:0.08,  gdp:5.76,  cpi:4.7,  unemployment:5.35 },
-      { year:2022, fedFunds:1.68,  gdp:1.32,  cpi:8.0,  unemployment:3.65 },
-      { year:2023, fedFunds:4.83,  gdp:3.39,  cpi:4.1,  unemployment:3.64 },
-      { year:2024, fedFunds:5.15,  gdp:2.40,  cpi:2.9,  unemployment:4.02 },
-      { year:2025, fedFunds:4.20,  gdp:1.99,  cpi:2.6,  unemployment:4.20 },
-    ];
-    const YTD_2026 = { year:2026, fedFunds:3.63, gdp:2.1, cpi:3.27, unemployment:4.20 };
+      // Built from the live macro series in data.js (FRED: FEDFUNDS, UNRATE,
+      // CPIAUCSL, GDPA) rather than a hand-typed table, so it tracks the
+      // pipeline instead of drifting out of date.
+      const _mm = D.macro || {};
+      const DATA = (function () {
+        const ff = _mm.fedFundsRate || {}, un = _mm.unemploymentRate || {},
+              cpi = _mm.cpiIndex || {}, gg = _mm.gdpGrowthPct || {};
+        const infl = y => (cpi[y] != null && cpi[y - 1] != null)
+          ? +(((cpi[y] - cpi[y - 1]) / cpi[y - 1]) * 100).toFixed(1) : null;
+        return Object.keys(ff).filter(y => !y.startsWith("_") && +y >= 1976)
+          .map(Number).sort((a, b) => a - b)
+          .map(y => ({ year: y, fedFunds: ff[y] ?? null, gdp: gg[y] ?? null,
+                       cpi: infl(y), unemployment: un[y] ?? null }));
+      })();
+    const YTD_2026 = null;   // the current year is part of DATA now
 
     const ERAS = [
       { label:"Stagflation",              start:1970, end:1982, color:"#f59e0b" },
@@ -4285,10 +4285,11 @@
       // compute y domain across all active series (main data + YTD point)
       const allVals = activeSeries.flatMap(key => {
         const main = DATA.map(d => d[key]);
-        return [...main, YTD_2026[key]];
+        return YTD_2026 ? [...main, YTD_2026[key]] : main;
       });
-      let yMin = allVals.length ? Math.min(...allVals) : -2;
-      let yMax = allVals.length ? Math.max(...allVals) : 20;
+      const finiteVals = allVals.filter(v => v != null && isFinite(v));
+      let yMin = finiteVals.length ? Math.min(...finiteVals) : -2;
+      let yMax = finiteVals.length ? Math.max(...finiteVals) : 20;
       const yPad = (yMax - yMin) * 0.08 || 1;
       yMin -= yPad; yMax += yPad;
       const yp = v => PAD.top + ih - ((v - yMin) / (yMax - yMin)) * ih;
@@ -4344,6 +4345,7 @@
       activeSeries.forEach(key => {
         const s = SERIES.find(s => s.key === key);
         if (!s) return;
+        if (!YTD_2026) return;
         const lastPt = DATA[DATA.length - 1];
         const x1 = xp(lastPt.year), y1 = yp(lastPt[key]);
         const x2 = xp(YTD_2026.year), y2 = yp(YTD_2026[key]);
@@ -4363,7 +4365,7 @@
         const hoverYr = YEAR_MIN + frac * (YEAR_MAX - YEAR_MIN);
 
         // find nearest data point (including YTD)
-        const allPts = [...DATA, YTD_2026];
+        const allPts = YTD_2026 ? [...DATA, YTD_2026] : DATA;
         let best = allPts[0];
         allPts.forEach(d => { if (Math.abs(d.year - hoverYr) < Math.abs(best.year - hoverYr)) best = d; });
 
@@ -4427,13 +4429,20 @@
     const curve = macro.treasuryCurve;
     if (!cod || !curve) return;          // degrade quietly, never blank the tab
 
+    // Treasuries are the risk-free comparison; Fed funds is the policy rate
+    // Apple's coupons are ultimately priced off; Moody's Aaa is the market
+    // yield for Apple's own rating bucket, Baa the investment-grade floor.
     const TENORS = [
-      { key: "3m",  label: "13-week bill" },
-      { key: "5y",  label: "5-yr note" },
-      { key: "10y", label: "10-yr note" },
-      { key: "30y", label: "30-yr bond" },
-    ].filter(t => curve[t.key]);
+      { key: "3m",  label: "13-week bill",   src: curve["3m"] },
+      { key: "5y",  label: "5-yr note",      src: curve["5y"] },
+      { key: "10y", label: "10-yr note",     src: curve["10y"] },
+      { key: "30y", label: "30-yr bond",     src: curve["30y"] },
+      { key: "fed", label: "Fed funds rate", src: macro.fedFundsRate },
+      { key: "aaa", label: "Moody's Aaa",    src: macro.corpAaaYield },
+      { key: "baa", label: "Moody's Baa",    src: macro.corpBaaYield },
+    ].filter(t => t.src && Object.keys(t.src).length);
     if (!TENORS.length) return;
+    const srcFor = k => (TENORS.find(t => t.key === k) || {}).src || {};
 
     const SVGNS = "http://www.w3.org/2000/svg";
     const AAPL_C = "#f59e0b";            // Apple cost of debt
@@ -4452,7 +4461,7 @@
       return n;
     };
     const tsyAt = y => {
-      const v = curve[activeTenor][String(y)];
+      const v = srcFor(activeTenor)[String(y)];
       return v == null ? null : v;
     };
 
@@ -4700,7 +4709,10 @@
         "full of coupons issued at 2013–2021 rates. It is not the yield you would get quoted on an " +
         "Apple bond today. Treasury figures are annual means of monthly closes (Yahoo Finance " +
         "^IRX/^FVX/^TNX/^TYX), matching the full-year basis of Apple's series — not the Jan-1 " +
-        "readings used by macro.treasury10yr elsewhere.";
+        "readings used by macro.treasury10yr elsewhere. Fed funds (FRED FEDFUNDS) is the policy " +
+        "rate Apple's coupons are priced off; Moody's Aaa and Baa (FRED AAA / BAA) are market " +
+        "yields on seasoned corporate bonds — Moody's rates Apple Aaa, so that curve is the " +
+        "market's price for exactly Apple's credit. All calendar-year averages of monthly data.";
     }
 
     window._bondYieldDraw = draw;
