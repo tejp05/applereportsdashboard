@@ -20533,5 +20533,151 @@ window.AAPL_DATA = {
   },
   "sp500TRSource": "Yahoo Finance ^SP500TR monthly close, December value per year (index inception Jan 1988 \u2014 covers every Apple M&A era)",
   "sp500TRNote": "Total-return index: dividends reinvested; like-for-like with the dividend-adjusted AAPL daily series."
+ },
+ "quarterly": {
+  "_comment": "Apple quarterly results as reported (US$ millions). Used to carry the dashboard past the last completed fiscal year with filed figures rather than estimates \u2014 FY2026 is in progress (Q1-Q3 reported).",
+  "source": "Apple quarterly earnings releases / Forms 10-Q and 10-K, cross-checked against SEC XBRL",
+  "quarters": [
+   {
+    "fy": 2021,
+    "fq": 4,
+    "end": "2021-09-25",
+    "revenue": 83360,
+    "netIncome": 20551
+   },
+   {
+    "fy": 2022,
+    "fq": 1,
+    "end": "2021-12-25",
+    "revenue": 123945,
+    "netIncome": 34630
+   },
+   {
+    "fy": 2022,
+    "fq": 2,
+    "end": "2022-03-26",
+    "revenue": 97278,
+    "netIncome": 25010
+   },
+   {
+    "fy": 2022,
+    "fq": 3,
+    "end": "2022-06-25",
+    "revenue": 82959,
+    "netIncome": 19442
+   },
+   {
+    "fy": 2022,
+    "fq": 4,
+    "end": "2022-09-24",
+    "revenue": 90146,
+    "netIncome": 20721
+   },
+   {
+    "fy": 2023,
+    "fq": 1,
+    "end": "2022-12-31",
+    "revenue": 117154,
+    "netIncome": 29998
+   },
+   {
+    "fy": 2023,
+    "fq": 2,
+    "end": "2023-04-01",
+    "revenue": 94836,
+    "netIncome": 24160
+   },
+   {
+    "fy": 2023,
+    "fq": 3,
+    "end": "2023-07-01",
+    "revenue": 81797,
+    "netIncome": 19881
+   },
+   {
+    "fy": 2023,
+    "fq": 4,
+    "end": "2023-09-30",
+    "revenue": 89498,
+    "netIncome": 22956
+   },
+   {
+    "fy": 2024,
+    "fq": 1,
+    "end": "2023-12-30",
+    "revenue": 119575,
+    "netIncome": 33916
+   },
+   {
+    "fy": 2024,
+    "fq": 2,
+    "end": "2024-03-30",
+    "revenue": 90753,
+    "netIncome": 23636
+   },
+   {
+    "fy": 2024,
+    "fq": 3,
+    "end": "2024-06-29",
+    "revenue": 85777,
+    "netIncome": 21448
+   },
+   {
+    "fy": 2024,
+    "fq": 4,
+    "end": "2024-09-28",
+    "revenue": 94930,
+    "netIncome": 14736
+   },
+   {
+    "fy": 2025,
+    "fq": 1,
+    "end": "2024-12-28",
+    "revenue": 124300,
+    "netIncome": 36330
+   },
+   {
+    "fy": 2025,
+    "fq": 2,
+    "end": "2025-03-29",
+    "revenue": 95359,
+    "netIncome": 24780
+   },
+   {
+    "fy": 2025,
+    "fq": 3,
+    "end": "2025-06-28",
+    "revenue": 94036,
+    "netIncome": 23434
+   },
+   {
+    "fy": 2025,
+    "fq": 4,
+    "end": "2025-09-27",
+    "revenue": 102466,
+    "netIncome": 27466
+   },
+   {
+    "fy": 2026,
+    "fq": 1,
+    "end": "2025-12-27",
+    "revenue": 143756,
+    "netIncome": 42097
+   },
+   {
+    "fy": 2026,
+    "fq": 2,
+    "end": "2026-03-28",
+    "revenue": 111184,
+    "netIncome": 29578
+   },
+   {
+    "fy": 2026,
+    "fq": 3,
+    "end": "2026-06-27",
+    "revenue": 109417,
+    "netIncome": 29789
+   }
+  ]
  }
 };

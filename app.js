@@ -1011,6 +1011,70 @@
   }
 
   /* ====================================================================== */
+  /*  HOME: quarterly results (as reported)                                 */
+  /*  The annual series stops at the last completed fiscal year, so the     */
+  /*  current year reads as a gap. These are filed quarters — no estimates  */
+  /*  — so an in-progress fiscal year shows real, sourced figures.          */
+  /* ====================================================================== */
+  function buildQuarterly() {
+    const host = document.getElementById("qtrChart");
+    const qs = ((D.quarterly || {}).quarters || []);
+    if (!host || !qs.length) { const c = document.getElementById("qtrCard"); if (c) c.hidden = true; return; }
+
+    const W = 1000, H = 300, PAD = { t: 18, r: 16, b: 40, l: 62 };
+    const iw = W - PAD.l - PAD.r, ih = H - PAD.t - PAD.b;
+    const maxRev = Math.max(...qs.map(q => q.revenue));
+    const yMax = Math.ceil(maxRev / 20000) * 20000;
+    const bw = iw / qs.length;
+    const xOf = i => PAD.l + i * bw + bw * 0.15;
+    const barW = bw * 0.7;
+    const yOf = v => PAD.t + ih - (v / yMax) * ih;
+    const lastFy = qs[qs.length - 1].fy;
+
+    let grid = "", bars = "", niPts = [], ticks = "";
+    for (let v = 0; v <= yMax; v += 20000) {
+      const y = yOf(v);
+      grid += `<line x1="${PAD.l}" y1="${y}" x2="${W - PAD.r}" y2="${y}" stroke="var(--line)" stroke-width="1"/>` +
+              `<text x="${PAD.l - 10}" y="${y + 4}" text-anchor="end" font-size="11" fill="var(--ink-dim)" font-family="var(--mono)">$${(v / 1000).toFixed(0)}B</text>`;
+    }
+    qs.forEach((q, i) => {
+      const x = xOf(i), y = yOf(q.revenue), h = PAD.t + ih - y;
+      const current = q.fy === lastFy;   // in-progress fiscal year
+      bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(h, 1).toFixed(1)}" rx="3" ` +
+              `fill="${current ? "var(--accent)" : "var(--blue-deep)"}" opacity="${current ? 0.95 : 0.75}">` +
+              `<title>${q.fp || ("Q" + q.fq)} FY${q.fy} (ended ${q.end}) — revenue $${(q.revenue / 1000).toFixed(1)}B · net income $${(q.netIncome / 1000).toFixed(1)}B</title></rect>`;
+      niPts.push(`${(x + barW / 2).toFixed(1)},${yOf(q.netIncome).toFixed(1)}`);
+      if (q.fq === 1)
+        ticks += `<text x="${(x + barW / 2).toFixed(1)}" y="${H - 14}" text-anchor="middle" font-size="11" fill="var(--ink-soft)" font-family="var(--mono)">FY${q.fy}</text>`;
+    });
+    const niDots = qs.map((q, i) =>
+      `<circle cx="${(xOf(i) + barW / 2).toFixed(1)}" cy="${yOf(q.netIncome).toFixed(1)}" r="3" fill="var(--up)"/>`).join("");
+
+    host.innerHTML =
+      `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;display:block">` +
+      grid + bars +
+      `<polyline points="${niPts.join(" ")}" fill="none" stroke="var(--up)" stroke-width="2.5" stroke-linejoin="round"/>` +
+      niDots + ticks + `</svg>` +
+      `<div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--ink-soft)">` +
+      `<span><span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:var(--blue-deep);vertical-align:-1px"></span> Revenue (completed FY)</span>` +
+      `<span><span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:var(--accent);vertical-align:-1px"></span> Revenue (FY${lastFy}, in progress)</span>` +
+      `<span><span style="display:inline-block;width:14px;height:3px;background:var(--up);vertical-align:3px"></span> Net income</span></div>`;
+
+    // headline stats: fiscal-year-to-date and trailing twelve months
+    const ytd = qs.filter(q => q.fy === lastFy);
+    const ttm = qs.slice(-4);
+    const sum = (a, k) => a.reduce((t, q) => t + q[k], 0);
+    const $B = v => `$${(v / 1000).toFixed(1)}B`;
+    document.getElementById("qtrSub").innerHTML =
+      `FY${lastFy} to date (${ytd.length} of 4 quarters): revenue <b>${$B(sum(ytd, "revenue"))}</b> · net income <b>${$B(sum(ytd, "netIncome"))}</b>` +
+      ` &nbsp;·&nbsp; trailing twelve months: revenue <b>${$B(sum(ttm, "revenue"))}</b> · net income <b>${$B(sum(ttm, "netIncome"))}</b>`;
+    document.getElementById("qtrNote").textContent =
+      `${qs.length} quarters as reported, ${qs[0].end} to ${qs[qs.length - 1].end}. The annual charts above end at the last completed fiscal year (FY${Y1}); ` +
+      `FY${lastFy} is still in progress, so it appears here as filed quarters rather than a projected full year — no estimates. ` +
+      `Source: Apple quarterly earnings releases and Forms 10-Q/10-K.`;
+  }
+
+  /* ====================================================================== */
   /*  HOME: iii. interactive trend chart                                    */
   /* ====================================================================== */
   const togHost = document.getElementById("metricToggles");
@@ -7089,6 +7153,7 @@
     renderSnapshot(Y1);
     drawChart();
     renderDerived();
+    buildQuarterly();
   } catch (e) { console.error("Overview tab failed to render:", e); }
   // deep-link via hash (e.g. index.html#regression)
   try {

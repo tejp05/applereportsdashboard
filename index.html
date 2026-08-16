@@ -6,7 +6,7 @@
   <title>Apple Through the Years — Annual Reports Dashboard</title>
   <meta name="description" content="Fifty years of Apple, drawn directly from the annual reports and 10-K filings (1977–2025)." />
   <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23f5f5f7" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.033 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>' />
-  <link rel="stylesheet" href="styles.css?v=2" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
   <!-- ===== Top bar ===== -->
@@ -47,7 +47,7 @@
       <div class="hero">
         <div class="hero-text">
           <div class="hero-kicker">1976 — 2025 · seven CEOs · four reinventions</div>
-          <h1>Fifty years of Apple,<br>straight from the annual reports</h1>
+          <h1>50 years of thinking differently</h1>
           <p>Every figure here comes directly from Apple&rsquo;s annual reports and SEC filings and is
              cross-checked against the record — never estimated. Scrub the timeline, filter by era,
              and watch a garage startup become the most valuable company on Earth.</p>
@@ -138,6 +138,19 @@
              Empty by default. -->
         <div class="custom-charts-host" id="customChartsHost"></div>
       </section>
+
+      <!-- Quarterly results — carries the view past the last completed fiscal
+           year using filed quarters, so the in-progress FY2026 is real data. -->
+      <div class="card chart-card" id="qtrCard">
+        <div class="derived-head">
+          <div>
+            <p class="section-title" style="margin:0 0 4px">Quarterly results — as reported</p>
+            <p class="derived-sub" id="qtrSub"></p>
+          </div>
+        </div>
+        <div id="qtrChart"></div>
+        <p class="chart-note" id="qtrNote"></p>
+      </div>
 
       <!-- i. Timeline slider -->
       <div class="scrubber card">
@@ -578,10 +591,10 @@
       if (v) window.LIVE_AGENT_URL = v;
     } catch (_) {} })();
   </script>
-  <script src="data.js?v=2"></script>
+  <script src="data.js?v=3"></script>
   <script src="Story Mode/aapl_daily_prices.js"></script>
-  <script src="charts.js?v=2"></script>
-  <script src="app.js?v=2"></script>
-  <script src="regression.js?v=2"></script>
+  <script src="charts.js?v=3"></script>
+  <script src="app.js?v=3"></script>
+  <script src="regression.js?v=3"></script>
 </body>
 </html>
