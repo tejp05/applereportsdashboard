@@ -458,7 +458,7 @@
     async function runSession() {
       const s = sessions[si++ % sessions.length];
       const cmd = typeof s.cmd === "function" ? s.cmd() : s.cmd;
-      const promptHTML = `<span class="bs-prompt">reports@apple&nbsp;›</span> `;
+      const promptHTML = `<span class="bs-prompt">reports@apple&nbsp;~&nbsp;%</span> `;
       screen.innerHTML = promptHTML + CARET;
       for (let i = 1; i <= cmd.length; i++) {
         screen.innerHTML = promptHTML + `<span class="bs-cmd">${esc(cmd.slice(0, i))}</span>` + CARET;
