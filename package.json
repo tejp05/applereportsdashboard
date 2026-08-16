@@ -1,0 +1,16 @@
+{
+  "name": "applereportsdashboard",
+  "version": "1.0.0",
+  "description": "Apple Through the Years — annual-reports dashboard",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 serve.py",
+    "deploy": "wrangler deploy"
+  },
+  "keywords": ["apple", "annual-reports", "dashboard"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

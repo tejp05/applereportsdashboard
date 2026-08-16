@@ -13,6 +13,11 @@ __pycache__/
 # local Claude Code settings
 .claude/settings.local.json
 
+# node
+node_modules/
+package-lock.json
+.wrangler/
+
 # large raw source data (regenerable via the fetch scripts; derived JSONs are kept)
 pipeline/data/sec_companyfacts_aapl.json
 pipeline/data/aapl_daily_yahoo_raw.json
