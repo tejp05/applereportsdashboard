@@ -322,6 +322,7 @@
   slider.addEventListener("input", () => renderSnapshot(+slider.value));
 
   const ceoFor = y => (meta.leadership.find(l => y >= l.from && (l.to == null || y <= l.to)) || {}).name || "—";
+  const cfoFor = y => ((meta.cfoLeadership || []).find(l => y >= l.from && (l.to == null || y <= l.to)) || {}).name || "—";
   const eraFor = y => (meta.eras.find(e => y >= e.from && y <= e.to) || {}).label || "—";
   const companyFor = y => y < 2007 ? "Apple Computer, Inc." : "Apple Inc.";
 
@@ -335,7 +336,7 @@
     const d = byYear.get(year) || {};
     document.getElementById("scrubYear").textContent = year;
     document.getElementById("scrubCtx").innerHTML =
-      `<b>${companyFor(year)}</b><br>CEO/Chair: <b>${ceoFor(year)}</b><br>Era: ${eraFor(year)}`;
+      `<b>${companyFor(year)}</b><br>CEO/Chair: <b>${ceoFor(year)}</b> · CFO: <b>${cfoFor(year)}</b><br>Era: ${eraFor(year)}`;
 
     const cards = [
       { k: "revenue",   yoy: true },
@@ -409,6 +410,19 @@
   buildChips("ceoChips", meta.leadership.map(l => ({
     label: l.name.replace(/(\w)\w*\s/g, "$1. "), from: l.from, to: l.to == null ? Y1 : l.to
   })));
+  // CFO chips — same interaction as CEO chips; repeat names (Graziano's two
+  // tenures) get a start-year suffix so the chips stay distinguishable
+  (function () {
+    const cfos = meta.cfoLeadership || [];
+    if (!cfos.length || !document.getElementById("cfoChips")) return;
+    const counts = {};
+    cfos.forEach(l => { counts[l.name] = (counts[l.name] || 0) + 1; });
+    buildChips("cfoChips", cfos.map(l => ({
+      label: l.name.replace(/(\w)\w*\s/g, "$1. ") +
+             (counts[l.name] > 1 ? " \u2019" + String(l.from).slice(2) : ""),
+      from: l.from, to: l.to == null ? Y1 : l.to
+    })));
+  })();
 
   /* ---- Hero Bob Shell: live-data terminal + mouse-parallax tilt ----------
      A fake terminal that "types" real commands and prints real data: the live
@@ -2123,6 +2137,11 @@
         </div>
         <div class="mac-gf-sep"></div>
         <div class="mac-gf-group">
+          <span class="mac-gf-group-lbl">CFO era</span>
+          <div class="mac-gf-chips" id="gfCfoChips"></div>
+        </div>
+        <div class="mac-gf-sep"></div>
+        <div class="mac-gf-group">
           <span class="mac-gf-group-lbl">Show layers</span>
           <div class="mac-gf-chips" id="gfLayerChips"></div>
         </div>
@@ -2737,6 +2756,20 @@
     // CEO chips
     const gfCeoEl = document.getElementById("gfCeoChips");
     CEO_ERAS.forEach(c => makeChip(c.label, c.key, gfCeoEl, c.from, c.to, c.fullName));
+
+    // CFO chips — same range-filter behavior, from metadata.cfoLeadership
+    const CFO_ERAS = (meta.cfoLeadership || [])
+      .filter(l => l.from >= firstYear || (l.to && l.to >= firstYear))
+      .map((l, i, arr) => ({
+        key: "cfo_" + l.from,
+        label: l.name.replace(/(\w)\w+\s/, "$1. ") +
+               (arr.filter(x => x.name === l.name).length > 1 ? " \u2019" + String(l.from).slice(2) : ""),
+        fullName: l.name + (l.role ? " — " + l.role : ""),
+        from: l.from,
+        to: l.to || lastYear,
+      }));
+    const gfCfoEl = document.getElementById("gfCfoChips");
+    if (gfCfoEl) CFO_ERAS.forEach(c => makeChip(c.label, c.key, gfCfoEl, c.from, c.to, c.fullName));
 
     // Layer chips (mirror the hero chart buttons)
     const gfLayerEl = document.getElementById("gfLayerChips");
@@ -3390,7 +3423,7 @@
 
       // ── Note + source line ─────────────────────────────────────────────
       const noteEl = document.getElementById("macHeroNote");
-      const layerName = { price: "split-adjusted quarterly close", marketCap: "market cap ($B)", dividends: "dividends per share overlay", earnings: "EPS overlay", acquisitions: "acquisition markers" }[heroActiveLayer] || heroActiveLayer;
+      const layerName = { price: "quarterly close", marketCap: "market cap ($B)", dividends: "dividends per share overlay", earnings: "EPS overlay", acquisitions: "acquisition markers" }[heroActiveLayer] || heroActiveLayer;
       noteEl.textContent =
         `Apple stock ${layerName} · ${yr0}–${yr1} · Grey bands = NBER recessions (FRED USREC). ` +
         `Price source: Yahoo Finance AAPL (quarterly close, split-adjusted). Market cap: FY-end shares (10-K) × FY-end close. ` +

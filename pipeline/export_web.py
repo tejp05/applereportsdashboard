@@ -206,6 +206,20 @@ def main():
             {"name": "Steve Jobs", "role": "CEO (interim 1997, titled 2000)", "from": 1997, "to": 2011},
             {"name": "Tim Cook", "role": "CEO", "from": 2011, "to": None},
         ],
+        "cfoLeadership": [
+            {"name": "Joseph Graziano", "role": "CFO (first tenure)", "from": 1981, "to": 1985},
+            {"name": "David Barram", "role": "CFO", "from": 1985, "to": 1987},
+            {"name": "Debi Coleman", "role": "CFO", "from": 1987, "to": 1989},
+            {"name": "Joseph Graziano", "role": "CFO (second tenure)", "from": 1989, "to": 1995},
+            {"name": "Fred Anderson", "role": "CFO", "from": 1996, "to": 2004},
+            {"name": "Peter Oppenheimer", "role": "CFO", "from": 2004, "to": 2014},
+            {"name": "Luca Maestri", "role": "CFO", "from": 2014, "to": 2024},
+            {"name": "Kevan Parekh", "role": "CFO", "from": 2025, "to": None},
+        ],
+        "_cfo_note": ("CFO tenures curated from the public record (proxy statements, "
+                      "contemporaneous reporting). 1977-1980 finance leadership predates "
+                      "a formal CFO title and is omitted. Mid-1980s handoff dates "
+                      "(Barram/Coleman) are as commonly documented."),
         "eras": [
             {"label": "Apple II era", "from": 1977, "to": 1983},
             {"label": "Macintosh & Sculley", "from": 1984, "to": 1990},
