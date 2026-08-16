@@ -1403,9 +1403,10 @@
         </div>
       </div>
       <div class="sm-outro">
-        <h2>Fifty years, still rewriting itself.</h2>
-        <p>From two founders in a garage to the most valuable company on Earth — the line
-           never stopped bending. The next chapter is being written now.</p>
+        <h2>50 years down. Cheers to 50 more.</h2>
+        <p>From three founders in a garage — Steve Wozniak, Steve Jobs and Ronald Wayne —
+           to the most valuable company on Earth. The line never stopped bending, and the
+           next chapter is being written now.</p>
       </div>
       <div class="sm-devnote" id="smDevNote" hidden></div>`;
 
