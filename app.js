@@ -775,7 +775,7 @@
         tryJSON(`${agentURL}/filings/latest?symbol=AAPL`),
         tryJSON(`${agentURL}/filings/xbrl?symbol=AAPL`),
       ]);
-      source = "agent proxy";
+      source = "live proxy";
     } catch (_) {
       try {
         const sub = await tryJSON("https://data.sec.gov/submissions/CIK0000320193.json");
@@ -802,7 +802,7 @@
       return;
     }
     const f = filingsData.latest;
-    const isNew = _lastFilingAccession != null && f.accessionNumber !== _lastFilingAccession && source === "agent proxy";
+    const isNew = _lastFilingAccession != null && f.accessionNumber !== _lastFilingAccession && source === "live proxy";
     _lastFilingAccession = f.accessionNumber;
     window.__latestFiling = f;   // read by the Bob Shell hero terminal
     elDot.classList.add("live");
@@ -826,8 +826,8 @@
       window.__latestXbrl = xbrlData;    // read by the Macro tab's live KPI row (revenue TTM + total debt)
       // Push the fresh XBRL numbers into the FY snapshot (live-quarter stat +
       // a live-FY chip if a 10-K newer than the pipeline data has been filed).
-      if (window.__applyLiveXbrl) window.__applyLiveXbrl(xbrlData);
-      if (window.refreshMacroKpis) window.refreshMacroKpis();
+      if (!xbrlData.synthetic && window.__applyLiveXbrl) window.__applyLiveXbrl(xbrlData);
+      if (!xbrlData.synthetic && window.refreshMacroKpis) window.refreshMacroKpis();
       const yoy = rows.find(r => r.fy === latest.fy - 1 && r.fp === latest.fp);
       let yoyHTML = "";
       if (yoy && yoy.revenue && latest.revenue) {
@@ -838,7 +838,7 @@
       elHeadline.innerHTML =
         `<b>${latest.fp} FY${latest.fy}</b> revenue <b>${money(latest.revenue)}</b>${yoyHTML}<br>` +
         `net income <b>${money(latest.netIncome)}</b> · diluted EPS <b>${latest.epsDiluted != null ? "$" + latest.epsDiluted.toFixed(2) : "n/a"}</b>` +
-        `<div style="margin-top:4px;color:var(--ink-dim);font-size:11px;">unaudited · straight from SEC XBRL, not yet folded into the verified pipeline series</div>`;
+        `<div style="margin-top:4px;color:var(--ink-dim);font-size:11px;">unaudited · straight from SEC XBRL (EDGAR), not yet folded into the verified pipeline series</div>`;
     } else {
       elHeadline.innerHTML = `<span style="color:var(--ink-dim)">latest-quarter XBRL detail appears when a live-data server is connected</span>`;
     }
@@ -3892,7 +3892,7 @@
           tryJSON(`${agentURL}/filings/latest?symbol=AAPL`),
           tryJSON(`${agentURL}/filings/xbrl?symbol=AAPL`),
         ]);
-        source = "agent proxy";
+        source = "live proxy";
       } catch (_) {
         // Fall back to direct EDGAR (CORS-open submissions API)
         try {

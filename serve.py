@@ -34,6 +34,89 @@ def price_prev(symbol):
     return price, prev, as_of
 
 
+
+SEC_UA = {"User-Agent": "AppleThroughTheYears dashboard (contact: dev@localhost)"}
+
+
+def sec_json(url):
+    req = urllib.request.Request(url, headers=SEC_UA)
+    with urllib.request.urlopen(req, timeout=9) as r:
+        return json.load(r)
+
+
+def apple_fq(end):
+    y, m = int(end[:4]), int(end[5:7])
+    if m >= 10: return y + 1, "Q1"
+    if m <= 1:  return y, "Q1"
+    if m <= 4:  return y, "Q2"
+    if m <= 7:  return y, "Q3"
+    return y, "Q4"
+
+
+def sec_quarterly(concept, unit):
+    data = sec_json("https://data.sec.gov/api/xbrl/companyconcept/CIK0000320193/us-gaap/%s.json" % concept)
+    q, annual = {}, {}
+    from datetime import date as _d
+    for f in data.get("units", {}).get(unit, []):
+        s_, e_ = f.get("start"), f.get("end")
+        if not s_ or not e_:
+            continue
+        days = (_d(*map(int, e_.split("-"))) - _d(*map(int, s_.split("-")))).days
+        if 60 < days < 100:
+            fy, fp = apple_fq(e_)
+            q[(fy, fp)] = {"fy": fy, "fp": fp, "end": e_, "val": f["val"]}
+        elif 330 < days < 400:
+            fy, _ = apple_fq(e_)
+            annual[fy] = {"fy": fy, "end": e_, "val": f["val"]}
+    if unit == "USD":
+        for a in annual.values():
+            qs = [q.get((a["fy"], p)) for p in ("Q1", "Q2", "Q3")]
+            if all(qs) and (a["fy"], "Q4") not in q:
+                q[(a["fy"], "Q4")] = {"fy": a["fy"], "fp": "Q4", "end": a["end"],
+                                      "val": a["val"] - sum(x["val"] for x in qs)}
+    return q
+
+
+def filings_latest():
+    sub = sec_json("https://data.sec.gov/submissions/CIK0000320193.json")
+    rec = sub["filings"]["recent"]
+    out = []
+    for i in range(len(rec["form"])):
+        if len(out) >= 8:
+            break
+        form = rec["form"][i]
+        if form not in ("10-K", "10-Q", "8-K"):
+            continue
+        items = (rec.get("items") or [""] * len(rec["form"]))[i] or ""
+        if form == "8-K" and "2.02" not in items:
+            continue
+        acc = rec["accessionNumber"][i]
+        out.append({"form": form, "filingDate": rec["filingDate"][i],
+                    "reportDate": rec["reportDate"][i], "accessionNumber": acc,
+                    "url": "https://www.sec.gov/Archives/edgar/data/320193/%s/%s"
+                           % (acc.replace("-", ""), rec["primaryDocument"][i])})
+    return {"companyName": sub["name"], "filings": out, "latest": out[0] if out else None}
+
+
+def filings_xbrl():
+    rev = sec_quarterly("RevenueFromContractWithCustomerExcludingAssessedTax", "USD")
+    ni = sec_quarterly("NetIncomeLoss", "USD")
+    eps = sec_quarterly("EarningsPerShareDiluted", "USD/shares")
+    rows = sorted(rev.values(), key=lambda r: r["end"])[-5:]
+    rows = [{"fy": r["fy"], "fp": r["fp"], "end": r["end"], "revenue": r["val"],
+             "netIncome": (ni.get((r["fy"], r["fp"])) or {}).get("val"),
+             "epsDiluted": (eps.get((r["fy"], r["fp"])) or {}).get("val")} for r in rows]
+    if rows:
+        last = rows[-1]
+        ya = rev.get((last["fy"] - 1, last["fp"]))
+        if ya and not any(r["fy"] == last["fy"] - 1 and r["fp"] == last["fp"] for r in rows):
+            rows.insert(0, {"fy": ya["fy"], "fp": ya["fp"], "end": ya["end"], "revenue": ya["val"],
+                            "netIncome": (ni.get((ya["fy"], ya["fp"])) or {}).get("val"),
+                            "epsDiluted": (eps.get((ya["fy"], ya["fp"])) or {}).get("val")})
+    return {"recentQuarters": rows, "latestQuarter": rows[-1] if rows else None,
+            "synthetic": True}
+
+
 class Handler(SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
@@ -54,6 +137,10 @@ class Handler(SimpleHTTPRequestHandler):
         qs = urllib.parse.parse_qs(parsed.query)
         symbol = (qs.get("symbol", ["AAPL"])[0]).upper()
         try:
+            if parsed.path == "/filings/latest":
+                return self.send_json(filings_latest())
+            if parsed.path == "/filings/xbrl":
+                return self.send_json(filings_xbrl())
             if parsed.path == "/quote":
                 price, prev, as_of = price_prev(symbol)
                 if not price:
