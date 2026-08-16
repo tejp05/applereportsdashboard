@@ -623,7 +623,7 @@
     };
     try {
       const q = await tryJSON(`${window.LIVE_AGENT_URL || "http://localhost:8787"}/quote?symbol=AAPL`);
-      if (q && q.price) { show(q.price, q.prevClose, `live · agent proxy · ${q.asOf || "today"}`); return; }
+      if (q && q.price) { show(q.price, q.prevClose, `live · Yahoo Finance via proxy · ${q.asOf || "today"}`); return; }
       throw new Error("empty agent quote");
     } catch (_) { /* agent server not running — try the next source */ }
     try {

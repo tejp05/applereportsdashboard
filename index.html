@@ -570,8 +570,11 @@
       if (p === "clear") localStorage.removeItem("LIVE_AGENT_URL");
       else if (p) localStorage.setItem("LIVE_AGENT_URL", p.replace(/\/+$/, ""));
       const stored = localStorage.getItem("LIVE_AGENT_URL");
-      const isLocalDev = location.hostname === "localhost" || location.hostname === "127.0.0.1";
-      const v = stored || (isLocalDev ? null : location.origin);
+      // Default to same origin everywhere: serve.py provides the /quote*
+      // proxy endpoints locally and Cloudflare Pages Functions provide them
+      // in production. file:// has no origin -- fetches fail and every
+      // widget degrades gracefully.
+      const v = stored || (location.origin.startsWith("http") ? location.origin : null);
       if (v) window.LIVE_AGENT_URL = v;
     } catch (_) {} })();
   </script>
