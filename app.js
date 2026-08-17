@@ -2182,7 +2182,18 @@
     document.getElementById("panel-macro").innerHTML = `
       <div class="hero">
         <div class="hero-text">
-          <div class="hero-kicker" id="macroKicker">1980 — 2026 · Apple vs. the market · recessions since 1854</div>
+          <div class="hero-kicker" id="macroKicker">${(() => {
+            // Count only what this dashboard can actually draw. The NBER
+            // chronology starts in 1854, but Apple's first trading day was
+            // Dec 12, 1980 — claiming 1854 was unverifiable against anything
+            // on screen. Derived so it stays true as the data extends.
+            const rec = (D.macro || {}).recessions || [];
+            const firstYr = D.financials[0].year;
+            const shown = rec.filter(r => r.end >= firstYr);
+            const WORDS = ["no","one","two","three","four","five","six","seven","eight","nine","ten"];
+            const n = WORDS[shown.length] || shown.length;
+            return `1980 — ${new Date().getFullYear()} · Apple vs. the market · ${n} NBER recessions since the IPO`;
+          })()}</div>
           <h1>Apple against the market</h1>
           <p>Stock performance, market cap, debt structure, and macro backdrop — all on one tab.
              Every number traces to a named source: Yahoo Finance, Apple 10-Ks, S&P Global, and FRED.
