@@ -8,6 +8,7 @@ proxy. Stdlib only; no dependencies.
 """
 import json
 import os
+import re
 import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -117,6 +118,59 @@ def filings_xbrl():
             "synthetic": True}
 
 
+
+def load_env_key():
+    """OPENAI_API_KEY from the environment, or from .env / .dev.vars beside this
+    file. Those files are gitignored — the key is never committed."""
+    if os.environ.get("OPENAI_API_KEY"):
+        return os.environ["OPENAI_API_KEY"], os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+    here = os.path.dirname(os.path.abspath(__file__))
+    key = model = None
+    for name in (".dev.vars", ".env"):
+        p = os.path.join(here, name)
+        if not os.path.exists(p):
+            continue
+        for line in open(p):
+            line = line.strip()
+            if line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            if k.strip() == "OPENAI_API_KEY" and not key:
+                key = v.strip()
+            elif k.strip() == "OPENAI_MODEL" and not model:
+                model = v.strip()
+        if key:
+            break
+    return key, (model or "gpt-4o-mini")
+
+
+def openai_chat(body):
+    key, model = load_env_key()
+    if not key:
+        return {"error": "OPENAI_API_KEY not set (env, .dev.vars or .env)"}, 503
+    messages = body.get("messages") or []
+    if not messages:
+        return {"error": "messages[] required"}, 400
+    payload = {"model": model, "messages": messages[-40:], "temperature": 0.2}
+    if body.get("tools"):
+        payload["tools"] = body["tools"]
+        payload["tool_choice"] = "auto"
+    req = urllib.request.Request(
+        "https://api.openai.com/v1/chat/completions",
+        data=json.dumps(payload).encode(),
+        headers={"Content-Type": "application/json", "Authorization": "Bearer " + key},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            data = json.load(r)
+    except urllib.error.HTTPError as e:
+        return {"error": f"OpenAI {e.code}", "detail": e.read().decode()[:400]}, 502
+    msg = (data.get("choices") or [{}])[0].get("message")
+    if not msg:
+        return {"error": "no message in OpenAI response"}, 502
+    return {"message": msg, "usage": data.get("usage")}, 200
+
+
 class Handler(SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
@@ -131,6 +185,19 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+
+    def do_POST(self):
+        parsed = urllib.parse.urlparse(self.path)
+        if parsed.path != "/chat":
+            self.send_error(404)
+            return
+        try:
+            n = int(self.headers.get("Content-Length") or 0)
+            body = json.loads(self.rfile.read(n) or b"{}")
+            out, status = openai_chat(body)
+            return self.send_json(out, status)
+        except Exception as e:
+            return self.send_json({"error": str(e)}, 502)
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
@@ -192,5 +259,6 @@ class Handler(SimpleHTTPRequestHandler):
 port = int(os.environ.get("PORT", 5500))
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 print(f"Serving Apple dashboard at http://localhost:{port}  (Ctrl+C to stop)")
-print("Live-quote proxy endpoints: /quote /quotes /quote/intraday /quote/history")
+print("Endpoints: /quote /quotes /quote/intraday /quote/history /filings/* /chat")
+print("Agent chat:", "enabled" if load_env_key()[0] else "disabled (no OPENAI_API_KEY)")
 ThreadingHTTPServer(("", port), Handler).serve_forever()

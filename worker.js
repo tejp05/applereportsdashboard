@@ -144,6 +144,49 @@ async function latestXbrl() {
   };
 }
 
+
+/* ---- POST /chat — OpenAI broker -------------------------------------------
+   The browser owns the tool loop (the tools drive the DOM), so this endpoint
+   is deliberately stateless: it forwards {messages, tools} to OpenAI and
+   returns the assistant message verbatim. The API key stays here — it is a
+   Worker secret and is never sent to the browser.                          */
+async function handleChat(request, env) {
+  if (request.method !== "POST") return jsonResponse({ error: "POST only" }, 405);
+  const key = env.OPENAI_API_KEY;
+  if (!key) {
+    return jsonResponse({ error: "OPENAI_API_KEY is not set on this Worker. Add it under " +
+      "Settings -> Variables and Secrets (type: Secret), then redeploy." }, 503);
+  }
+  let body;
+  try { body = await request.json(); } catch (_) { return jsonResponse({ error: "invalid JSON" }, 400); }
+  const messages = Array.isArray(body.messages) ? body.messages.slice(-40) : null;
+  if (!messages || !messages.length) return jsonResponse({ error: "messages[] required" }, 400);
+
+  const payload = {
+    model: env.OPENAI_MODEL || "gpt-4o-mini",
+    messages,
+    temperature: 0.2,
+  };
+  if (Array.isArray(body.tools) && body.tools.length) {
+    payload.tools = body.tools;
+    payload.tool_choice = "auto";
+  }
+
+  const r = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
+    body: JSON.stringify(payload),
+  });
+  if (!r.ok) {
+    const detail = await r.text();
+    return jsonResponse({ error: `OpenAI ${r.status}`, detail: detail.slice(0, 400) }, 502);
+  }
+  const data = await r.json();
+  const message = data.choices && data.choices[0] && data.choices[0].message;
+  if (!message) return jsonResponse({ error: "no message in OpenAI response" }, 502);
+  return jsonResponse({ message, usage: data.usage || null }, 200, { "cache-control": "no-store" });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -193,6 +236,10 @@ export default {
           close: adj[idx] != null ? Math.round(adj[idx] * 100) / 100 : null,
         })).filter(p => p.close != null);
         return jsonResponse({ symbol, range, points: points.slice(-90) });
+      }
+
+      if (url.pathname === "/chat") {
+        return await handleChat(request, env);
       }
 
       if (url.pathname === "/filings/latest") {
