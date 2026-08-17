@@ -330,7 +330,7 @@ function getRows() {
     // the very series the spend-vs-revenue slope is built on. The type carve-out
     // matters: maTabOnly also tags real acquisitions (Confluent) that belong in
     // the spend series. Note this deliberately leaves the older un-flagged exits
-    // (PC Division, Kyndryl) counted, so these regressions stay identical to
+    // counted, so these regressions stay stable as the deal list grows.
     // what they showed before the backfill; correcting those is a separate call.
     if (d.maTabOnly && d.type !== "acquisition") return;
     maCount[d.year] = (maCount[d.year] || 0) + 1;
@@ -496,8 +496,7 @@ const PRESET_GROUPS = [
    the data build lands: each needs enough overlapping observations to fit, and
    the sign of its correlation must match the group it sits in. A button that
    renders an error or contradicts its own label is worse than no button.
-   (Inherited rule from the IBM lab, where three presets failed that check and
-   were replaced.) */
+   (Three presets in the predecessor build failed exactly this check.) */
 const PRESETS = [
   // ---- strong positive ------------------------------------------------------
   {

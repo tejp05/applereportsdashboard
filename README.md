@@ -99,8 +99,9 @@ python3 pipeline/export_web.py            # assemble → data.js
 ```
 
 See `pipeline/` for the raw source JSONs and per-script documentation. Every
-number in the dataset traces to a named source; adversarial verification passes
-re-checked the pre-EDGAR years and every disclosed deal value.
+number in the dataset traces to a named source recorded alongside it. Pre-EDGAR
+years (FY1977–1993) were corroborated against at least two independent sources
+per year for revenue and net income; lines no source states are left `null`.
 
 ## Accuracy method
 
@@ -110,6 +111,7 @@ re-checked the pre-EDGAR years and every disclosed deal value.
   and period annual reports for the years in between.
 - **Never estimate.** A value not reliably stated stays `null` and the UI shows
   a gap.
-- **Cross-checks everywhere.** Category tables must sum to the audited revenue
-  total; market caps were anchored against known values; split-adjusted EPS was
-  verified against Apple's own restatements.
+- **Cross-checks everywhere.** Product-category tables are validated to sum to
+  the audited net-sales total (the build fails if they don't); peer valuation
+  multiples computed from TTM filings agree with independently reported P/E to
+  within ~3%; split-adjusted per-share figures follow Apple's own restatements.

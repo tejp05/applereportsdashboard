@@ -5661,7 +5661,7 @@
       const mc = byYear.get(d.year)?.marketCap;
       return (d.valueMillions && mc) ? d.valueMillions / mc * 100 : 0;
     });
-    const maxPct = Math.max(...allPcts);   // Red Hat ~29.6%
+    const maxPct = Math.max(...allPcts);   // boldest deal by % of market cap
 
     // ── Cumulative acquisition spend by year (for line chart) ────────────────
     const acqByYear = deals
@@ -5676,9 +5676,9 @@
     const totalAcqSpend = deals.filter(d => d.type === "acquisition").reduce((s,d) => s + (d.valueMillions||0), 0);
     const biggest = deals.filter(d=>d.type==="acquisition").reduce((a,b)=>((b.valueMillions||0)>(a.valueMillions||0)?b:a), deals[0]);
     const divCount  = deals.filter(d => d.type === "divestiture" || d.type === "spinoff").length;
-    // Cash sale proceeds come from divestitures only — spin-offs (e.g. Kyndryl)
+    // Cash sale proceeds come from divestitures only — spin-offs
     // distribute shares to holders and generate no proceeds, so they're
-    // excluded here. (Kyndryl's scale is shown separately as its spin-off revenue.)
+    // are excluded here (they distribute shares rather than raise cash).
     const divProceeds = deals.filter(d => d.type === "divestiture").reduce((s,d) => s + (d.valueMillions||0), 0);
 
     // ── Verdict scorecard — aggregate the per-deal alpha data into an
@@ -5718,8 +5718,8 @@
              Every stock-performance figure on this tab (Apple and its benchmarks) uses dividend- and split-adjusted
              close prices, so returns reflect what a shareholder actually earned, not just the raw share price.</p>
         </div>
-        <!-- RESEARCH-FILL: pending-deal card (restore .ma-pending-card markup
-             here if a signed-but-unclosed Apple deal exists at build time) -->
+        <!-- A pending-deal card slots in here when a signed-but-unclosed deal
+             exists; as of this build Apple has no announced pending acquisition. -->
       </div>
 
       <div class="ma-stats">
@@ -5987,7 +5987,7 @@
         // macro.sp500YearEnd, which are raw close and also feed the Macro vs Apple
         // tab's chart — this fix can't alter that other tab's numbers).
         // sp500TRYearEnd is real Yahoo ^SP500TR data from 1988 on; 1983-1987
-        // (needed only because the Pre-Gerstner era starts in 1984) is
+        // (needed only for eras beginning before 1988) is
         // reconstructed from Robert Shiller's (Yale) monthly S&P price+dividend
         // dataset and chain-linked to the real index — see data.js's
         // maBenchmark.sp500TRSource for the exact method. This replaces an
@@ -7341,7 +7341,7 @@
         <h3>Source documents</h3>
         <p>Figures come from Apple's Form 10-K filings on SEC EDGAR (fiscal 1994 onward), SEC XBRL company facts (fiscal 2008 onward, machine-read from the audited filings), and Apple Computer annual reports / the December 1980 IPO prospectus for the earlier years. Where pre-1994 documents aren't publicly archived, figures were cross-checked across at least two independent secondary sources and the source is recorded.</p>
         <h3>Cross-checking</h3>
-        <p>Every value in the XBRL era is taken as originally reported in that year's own 10-K. Earlier figures are checked against the comparative tables in later filings (each 10-K restates prior years). Adversarial verification passes re-checked the pre-1994 years and every disclosed M&amp;A value against independent sources.</p>
+        <p>Every value in the XBRL era is taken as originally reported in that year's own 10-K. FY1994–2007 comes from each year's own filing read directly on EDGAR. Pre-EDGAR years (FY1977–1993) are not machine-readable anywhere, so revenue and net income for those years were corroborated against at least two independent sources apiece — the December 1980 IPO prospectus for FY1977–80, and period annual reports, Fortune 500 archives and Compustat-derived tables thereafter — with the source recorded per year. Balance-sheet and cash-flow lines for those years are populated only where a source states them, and are <code>n/a</code> otherwise.</p>
         <h3>The n/a rule</h3>
         <p>If a line item wasn't reliably stated, it shows as <code>n/a</code> — never estimated, never interpolated. Gaps in the chart are real gaps in the reporting.</p>
         <h3>Per-share figures &amp; splits</h3>
@@ -7349,7 +7349,7 @@
         <h3>Free Cash Flow definition</h3>
         <p>Apple publishes no headline FCF line, so the standard derivation is used everywhere: <strong>Operating Cash Flow − Capital Expenditure</strong>, both straight from the audited cash-flow statements. The series is unlevered — interest, buybacks, dividends and all other financing activities are excluded.</p>
         <h3>M&amp;A sourcing</h3>
-        <p>Apple rarely discloses deal terms. A value appears only where Apple stated it in a filing or confirmed it publicly (e.g. Beats, $3.0B); values from reliable contemporaneous reporting are marked as such; everything else is <em>undisclosed</em>. Tim Cook said in 2021 that Apple had bought about 100 companies in six years — the named list here is the traceable subset, not the whole iceberg.</p>
+        <p>Apple rarely discloses deal terms. A value appears only where Apple stated it in a filing or confirmed it publicly (e.g. Beats, $3.0B); values from reliable contemporaneous reporting are marked as such; everything else is <em>undisclosed</em>. Tim Cook said in 2021 that Apple had bought about 100 companies in six years — the named list here is the traceable subset, not the whole iceberg. Coverage is uneven by design: deals from 2020 onward were compiled exhaustively with a source cited per transaction (many surface only through Apple's EU Digital Markets Act filings), while pre-2020 entries are the well-documented deals from the public record rather than an exhaustive sweep.</p>
         <h3>Market data</h3>
         <p>Daily prices, splits and dividends are from Yahoo Finance (AAPL, from the December 12, 1980 IPO). Total-return series use dividend-and-split-adjusted closes; the investment calculator uses split-only adjusted closes (price return). Benchmarks: ^SP500TR (from 1988) and XLK (from December 1998), both dividend-adjusted.</p>
         <h3>Currency &amp; units</h3>
@@ -7850,7 +7850,7 @@
         render();
       });
 
-      /* EV pill toggles — all companies including IBM */
+      /* Peer pill toggles — all companies including Apple */
       document.querySelectorAll("#ev-ebitda-toggles .ev-cb").forEach(function(btn) {
         btn.addEventListener("click", function() {
           btn.classList.toggle("active");
@@ -8526,7 +8526,7 @@
        display:none, and nothing on screen told you a click was required. The
        analysis (SWOT, comparative table, Five Forces, Ansoff, BCG, position
        map) only existed after a click most visitors had no reason to make.
-       Software is the default because it is IBM's largest segment. */
+       iPhone is the default because it is Apple's largest category. */
     if (segBtns.length) segBtns[0].click();
    } catch (e) { console.error("Competitors tab failed to initialize:", e); }
   })();
