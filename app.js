@@ -2273,7 +2273,7 @@
       <div class="card mac-hero-chart-card" id="macHeroChartCard">
         <div class="mac-hero-chart-header">
           <div>
-            <div class="mac-hero-chart-title">Apple Stock Performance</div>
+            <div class="mac-hero-chart-title">Fifty Years of Apple, Priced by the Market</div>
             <div class="mac-hero-chart-sub" id="macHeroChartSub">1981 – present · quarterly close · split-adjusted</div>
           </div>
           <div class="mac-hero-chart-controls">
@@ -3240,7 +3240,21 @@
       }
 
       // Secondary layer data (annual, from fin)
-      const annFin = fin.filter(d => d.year >= yr0 && d.year <= yr1);
+      let annFin = fin.filter(d => d.year >= yr0 && d.year <= yr1);
+      // The annual series ends at the last completed fiscal year, so the year
+      // in progress reads as a gap on the per-share layers. Splice in what the
+      // quarterly filings already settle (FY2026 dividends are final — all four
+      // have gone ex; EPS is the sum of quarters reported so far).
+      const PY = D.partialYear;
+      const pyUsable = PY && PY.year >= yr0 && PY.year <= yr1 &&
+                       !fin.some(d => d.year === PY.year);
+      if (pyUsable) {
+        annFin = annFin.concat([{
+          year: PY.year, marketCap: null, stockPrice: null,
+          dividendsPerShare: PY.dividendsPerShare,
+          epsDiluted: PY.epsDiluted, _partial: true,
+        }]);
+      }
 
       // Build value domain
       let vals = [];
@@ -3458,7 +3472,9 @@
           const bar = document.createElementNS(SVGNS, "rect");
           bar.setAttribute("x", bx); bar.setAttribute("y", divBotY - bh);
           bar.setAttribute("width", 8); bar.setAttribute("height", bh);
-          bar.setAttribute("fill", "rgba(111,220,140,0.65)"); bar.setAttribute("rx", "1.5");
+          bar.setAttribute("fill", d._partial && !PY.dividendsComplete
+            ? "rgba(111,220,140,0.32)" : "rgba(111,220,140,0.65)");
+          bar.setAttribute("rx", "1.5");
           bar.dataset.year = d.year; bar.dataset.div = d.dividendsPerShare;
           svg.appendChild(bar);
         });
@@ -3479,7 +3495,9 @@
           bar.setAttribute("x", bx);
           bar.setAttribute("y", d.epsDiluted >= 0 ? epsZeroY - bh : epsZeroY);
           bar.setAttribute("width", 8); bar.setAttribute("height", bh);
-          bar.setAttribute("fill", d.epsDiluted >= 0 ? "rgba(165,110,255,0.6)" : "rgba(250,77,86,0.6)");
+          // dim the in-progress year: it is a part-year sum, not a full-year EPS
+          bar.setAttribute("fill", d._partial ? "rgba(165,110,255,0.28)"
+            : d.epsDiluted >= 0 ? "rgba(165,110,255,0.6)" : "rgba(250,77,86,0.6)");
           bar.setAttribute("rx", "1.5");
           bar.dataset.year = d.year; bar.dataset.eps = d.epsDiluted;
           svg.appendChild(bar);
@@ -3615,7 +3633,11 @@
         `Price source: Yahoo Finance AAPL (quarterly close, split-adjusted). Market cap: FY-end shares (10-K) × FY-end close. ` +
         `Acquisition markers: Apple press releases / filings (major disclosed deals). ` +
         `Credit ratings: S&P Global Ratings press releases; Moody's press releases. ` +
-        `Dividends/EPS: Apple 10-K. All figures from cited sources — no estimates or interpolations.`;
+        `Dividends/EPS: Apple 10-K. All figures from cited sources — no estimates or interpolations.` +
+        (pyUsable && (heroActiveLayer === "dividends" || heroActiveLayer === "earnings")
+          ? ` FY${PY.year} is in progress: dividends per share are final (all four payments have gone ex-dividend), ` +
+            `while EPS is the sum of the ${PY.epsQuarters} quarters reported so far, not a projected full year.`
+          : "");
 
       // Sub-header update
       const subEl = document.getElementById("macHeroChartSub");
@@ -7197,7 +7219,7 @@
     <div class="hero">
       <div class="hero-text">
         <div class="hero-kicker">About &amp; Data · sources, methods, maintenance</div>
-        <h1>Built to outlive its builders</h1>
+        <h1>Every number, traced to its source</h1>
         <p>Fifty years of Apple's own reporting, explorable by anyone —
            and everything is documented so it keeps working long after the original team moves on.</p>
       </div>

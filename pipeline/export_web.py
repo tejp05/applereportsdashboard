@@ -348,6 +348,37 @@ def main():
         "sp500TRNote": "Total-return index: dividends reinvested; like-for-like with the dividend-adjusted AAPL daily series.",
     }
 
+    # ---------------- in-progress fiscal year ----------------
+    # The annual series stops at the last completed fiscal year. Anything the
+    # quarterly filings already settle for the year in progress goes here, so
+    # charts can extend without inventing a projected full year.
+    partial_year = None
+    if quarterly and quarterly.get("quarters"):
+        qs = quarterly["quarters"]
+        cur = max(q["fy"] for q in qs)
+        if cur > years[-1]:
+            qcur = [q for q in qs if q["fy"] == cur]
+            eps = [q.get("epsDiluted") for q in qcur if q.get("epsDiluted") is not None]
+            divs = (quarterly.get("dividendsByFiscalYear") or {}).get(str(cur))
+            partial_year = {
+                "year": cur,
+                "quartersReported": len(qcur),
+                "revenue": round(sum(q["revenue"] for q in qcur), 1),
+                "netIncome": round(sum(q["netIncome"] for q in qcur), 1),
+                "epsDiluted": round(sum(eps), 2) if eps else None,
+                "epsQuarters": len(eps),
+                "dividendsPerShare": divs["total"] if divs else None,
+                # Apple pays four dividends a fiscal year; if all four have gone
+                # ex, the dividend figure is final even though the year is not.
+                "dividendsComplete": bool(divs and len(divs["payments"]) >= 4),
+                "note": ("Fiscal year in progress — figures are the sum of quarters "
+                         "reported so far, not a projected full year."),
+            }
+            print(f"  partial FY{cur}: {partial_year['quartersReported']}q revenue "
+                  f"${partial_year['revenue']/1000:.1f}B, EPS {partial_year['epsDiluted']} "
+                  f"({partial_year['epsQuarters']}q), DPS {partial_year['dividendsPerShare']} "
+                  f"{'(complete)' if partial_year['dividendsComplete'] else '(partial)'}")
+
     out = {
         "generated": date.today().isoformat(),
         "currency": "USD_millions",
@@ -362,6 +393,7 @@ def main():
         "maPerformance": ma_performance,
         "maBenchmark": ma_benchmark,
         "quarterly": quarterly or {"quarters": []},
+        "partialYear": partial_year,
         "valuation": valuation or {"peers": []},
     }
 
