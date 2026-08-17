@@ -4129,7 +4129,7 @@
               cpi = _mm.cpiIndex || {}, gg = _mm.gdpGrowthPct || {};
         const infl = y => (cpi[y] != null && cpi[y - 1] != null)
           ? +(((cpi[y] - cpi[y - 1]) / cpi[y - 1]) * 100).toFixed(1) : null;
-        return Object.keys(ff).filter(y => !y.startsWith("_") && +y >= 1976)
+        return Object.keys(ff).filter(y => !y.startsWith("_") && +y >= 1970)
           .map(Number).sort((a, b) => a - b)
           .map(y => ({ year: y, fedFunds: ff[y] ?? null, gdp: gg[y] ?? null,
                        cpi: infl(y), unemployment: un[y] ?? null }));
@@ -4333,10 +4333,15 @@
       activeSeries.forEach(key => {
         const s = SERIES.find(s => s.key === key);
         if (!s) return;
-        const pts = DATA.map(d => `${xp(d.year).toFixed(1)},${yp(d[key]).toFixed(1)}`).join(" ");
+        // Skip years a series does not cover (e.g. GDP growth for the current,
+        // incomplete year). Mapping a null through yp() yields NaN coordinates,
+        // which silently kills the whole polyline — that was the visible gap.
+        const have = DATA.filter(d => d[key] != null && isFinite(d[key]));
+        if (!have.length) return;
+        const pts = have.map(d => `${xp(d.year).toFixed(1)},${yp(d[key]).toFixed(1)}`).join(" ");
         svg.appendChild(svgEl("polyline", { points:pts, fill:"none", stroke:s.color, "stroke-width":"2", "stroke-linejoin":"round" }));
         // dots
-        DATA.forEach(d => {
+        have.forEach(d => {
           svg.appendChild(svgEl("circle", { cx:xp(d.year).toFixed(1), cy:yp(d[key]).toFixed(1), r:"2.5", fill:s.color }));
         });
       });
