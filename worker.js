@@ -75,9 +75,14 @@ async function cachedJson(url, ctx, ttl, produce) {
 // Yahoo 429s aggressively from datacenter IPs; query2 is a separate pool, so a
 // single retry there rescues most rate-limited calls.
 async function yahooFetch(path) {
+  // A cold edge location has no cached copy to fall back on, so a single 429
+  // there would fail the request outright. Alternate hosts with a short
+  // backoff — enough to ride out the burst without stalling the response.
   const hosts = ["https://query1.finance.yahoo.com", "https://query2.finance.yahoo.com"];
+  const sleep = ms => new Promise(res => setTimeout(res, ms));
   let lastErr;
-  for (const host of hosts) {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const host = hosts[attempt % hosts.length];
     try {
       const r = await fetch(host + path, {
         headers: {
@@ -88,8 +93,9 @@ async function yahooFetch(path) {
       });
       if (r.ok) return await r.json();
       lastErr = new Error(`yahoo ${r.status}`);
-      if (r.status !== 429 && r.status !== 503) break;
+      if (r.status !== 429 && r.status !== 503) break;   // real error, not throttling
     } catch (e) { lastErr = e; }
+    if (attempt < 3) await sleep(180 * (attempt + 1));
   }
   throw lastErr || new Error("yahoo unreachable");
 }
