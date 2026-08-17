@@ -26,12 +26,78 @@ function fiscalQuarter(end) {
   return { fy: y, fp: "Q4" };
 }
 
+
+/* ---- Edge cache + resilience ---------------------------------------------
+   Yahoo rate-limits (429) shared datacenter IPs, and every visitor was firing
+   ~11 upstream calls a minute from Cloudflare's ranges. Two defences:
+
+   1. Cache each JSON response at the edge, so N visitors cost ONE upstream
+      call per TTL instead of N.
+   2. Keep a long-lived "last good" copy. If upstream 429s or dies we serve
+      that instead of failing, so the UI keeps showing a real price with an
+      honest staleness stamp rather than a dash.                            */
+const EDGE = caches.default;
+const keyFor = (url, suffix) => new Request(`https://cache.local${url.pathname}${url.search}${suffix}`);
+
+async function cachedJson(url, ctx, ttl, produce) {
+  const fresh = keyFor(url, "");
+  const backup = keyFor(url, "|last-good");
+
+  const hit = await EDGE.match(fresh);
+  if (hit) return hit;
+
+  try {
+    const data = await produce();
+    const resp = jsonResponse(data, 200, {
+      "cache-control": `public, max-age=${ttl}`,
+      "x-data-source": "upstream",
+    });
+    if (ctx && ctx.waitUntil) {
+      ctx.waitUntil(EDGE.put(fresh, resp.clone()));
+      // last-good copy kept far longer than the fresh window
+      const keep = new Response(resp.clone().body, resp);
+      keep.headers.set("cache-control", "public, max-age=86400");
+      ctx.waitUntil(EDGE.put(backup, keep));
+    }
+    return resp;
+  } catch (err) {
+    const stale = await EDGE.match(backup);
+    if (stale) {
+      const out = new Response(stale.body, stale);
+      out.headers.set("x-data-source", "stale-on-error");
+      out.headers.set("x-upstream-error", String(err).slice(0, 80));
+      return out;
+    }
+    throw err;
+  }
+}
+
+// Yahoo 429s aggressively from datacenter IPs; query2 is a separate pool, so a
+// single retry there rescues most rate-limited calls.
+async function yahooFetch(path) {
+  const hosts = ["https://query1.finance.yahoo.com", "https://query2.finance.yahoo.com"];
+  let lastErr;
+  for (const host of hosts) {
+    try {
+      const r = await fetch(host + path, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
+          "Accept": "application/json",
+        },
+        cf: { cacheTtl: 45, cacheEverything: true },
+      });
+      if (r.ok) return await r.json();
+      lastErr = new Error(`yahoo ${r.status}`);
+      if (r.status !== 429 && r.status !== 503) break;
+    } catch (e) { lastErr = e; }
+  }
+  throw lastErr || new Error("yahoo unreachable");
+}
+
 async function fetchYahooChart(symbol, params) {
-  const url = new URL(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}`);
-  Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, String(value)));
-  const r = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
-  if (!r.ok) throw new Error(`yahoo ${r.status}`);
-  const j = await r.json();
+  const qs = new URLSearchParams(Object.fromEntries(
+    Object.entries(params).map(([k, v]) => [k, String(v)])));
+  const j = await yahooFetch(`/v8/finance/chart/${encodeURIComponent(symbol)}?${qs}`);
   const result = j.chart && j.chart.result && j.chart.result[0];
   if (!result) throw new Error("no chart result");
   return result;
@@ -188,46 +254,53 @@ async function handleChat(request, env) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     try {
       if (url.pathname === "/quote") {
         const symbol = (url.searchParams.get("symbol") || "AAPL").toUpperCase().replace(/[^A-Z0-9^.\-]/g, "");
-        const q = await pricePrev(symbol);
-        if (!q.price) return jsonResponse({ error: "no price" }, 502);
-        const asOf = q.asOf ? new Date(q.asOf * 1000).toISOString().slice(0, 10) : "today";
-        return jsonResponse({ symbol, price: q.price, prevClose: q.prevClose, asOf });
+        return await cachedJson(url, ctx, 60, async () => {
+          const q = await pricePrev(symbol);
+          if (!q.price) throw new Error("no price upstream");
+          const asOf = q.asOf ? new Date(q.asOf * 1000).toISOString().slice(0, 10) : "today";
+          return { symbol, price: q.price, prevClose: q.prevClose, asOf };
+        });
       }
 
       if (url.pathname === "/quotes") {
         const raw = url.searchParams.get("symbols") || DEFAULT_SYMBOLS;
         const symbols = raw.split(",").map(s => s.trim().toUpperCase()).filter(s => /^[A-Z0-9^\.\-]{1,10}$/.test(s)).slice(0, 16);
-        const quotes = [];
-        for (const symbol of symbols) {
+        return await cachedJson(url, ctx, 60, async () => {
+        const settled = await Promise.all(symbols.map(async symbol => {
           try {
             const q = await pricePrev(symbol);
             if (q.price && q.prevClose != null) {
-              quotes.push({ symbol, price: q.price, changePct: (q.price - q.prevClose) / q.prevClose * 100 });
+              return { symbol, price: q.price, changePct: (q.price - q.prevClose) / q.prevClose * 100 };
             }
           } catch (_) {}
-        }
-        return jsonResponse({ quotes }, quotes.length ? 200 : 502);
+          return null;
+        }));
+        const quotes = settled.filter(Boolean);
+        if (!quotes.length) throw new Error("no quotes available upstream");
+        return { quotes };
+        });
       }
 
       if (url.pathname === "/quote/intraday") {
         const symbol = (url.searchParams.get("symbol") || "AAPL").toUpperCase().replace(/[^A-Z0-9^.\-]/g, "");
-        const res = await fetchYahooChart(symbol, { interval: "5m", range: "1d" });
-        const closes = ((res && res.indicators && res.indicators.quote && res.indicators.quote[0] && res.indicators.quote[0].close) || []).filter(c => c != null);
-        if (closes.length < 2) return jsonResponse({ error: "no bars" }, 502);
-        return jsonResponse({
-          points: closes.map(price => ({ price })),
-          prevClose: res.meta && (res.meta.chartPreviousClose || res.meta.previousClose),
+        return await cachedJson(url, ctx, 120, async () => {
+          const res = await fetchYahooChart(symbol, { interval: "5m", range: "1d" });
+          const closes = ((res && res.indicators && res.indicators.quote && res.indicators.quote[0] && res.indicators.quote[0].close) || []).filter(c => c != null);
+          if (closes.length < 2) throw new Error("no intraday bars upstream");
+          return { points: closes.map(price => ({ price })),
+                   prevClose: res.meta && (res.meta.chartPreviousClose || res.meta.previousClose) };
         });
       }
 
       if (url.pathname === "/quote/history") {
         const symbol = (url.searchParams.get("symbol") || "AAPL").toUpperCase().replace(/[^A-Z0-9^.\-]/g, "");
         const range = ["5d", "1mo", "3mo", "6mo", "1y"].includes(url.searchParams.get("range") || "1mo") ? url.searchParams.get("range") : "1mo";
+        return await cachedJson(url, ctx, 900, async () => {
         const res = await fetchYahooChart(symbol, { interval: "1d", range, includeAdjustedClose: "true" });
         const timestamps = res.timestamp || [];
         const adj = (res.indicators && res.indicators.adjclose && res.indicators.adjclose[0] && res.indicators.adjclose[0].adjclose) || [];
@@ -235,7 +308,8 @@ export default {
           date: new Date(ts * 1000).toISOString().slice(0, 10),
           close: adj[idx] != null ? Math.round(adj[idx] * 100) / 100 : null,
         })).filter(p => p.close != null);
-        return jsonResponse({ symbol, range, points: points.slice(-90) });
+        return { symbol, range, points: points.slice(-90) };
+        });
       }
 
       if (url.pathname === "/chat") {
@@ -243,11 +317,11 @@ export default {
       }
 
       if (url.pathname === "/filings/latest") {
-        return jsonResponse(await latestFilings());
+        return await cachedJson(url, ctx, 600, latestFilings);
       }
 
       if (url.pathname === "/filings/xbrl") {
-        return jsonResponse(await latestXbrl());
+        return await cachedJson(url, ctx, 1800, latestXbrl);
       }
     } catch (error) {
       return jsonResponse({ error: String(error) }, 502);
